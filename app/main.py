@@ -30,7 +30,7 @@ def init_crawler():
     }
 
     new_crawler_response = requests.post(
-        "http://ec2-3-16-31-169.us-east-2.compute.amazonaws.com/crawlers",
+        "http://ec2-18-185-96-23.eu-central-1.compute.amazonaws.com/crawlers",
         json=create_crawler_dict,
     )
 
@@ -46,7 +46,7 @@ def get_frontier(uuid):
         "length": 5
     }
     frontier_response = requests.post(
-        "http://ec2-3-16-31-169.us-east-2.compute.amazonaws.com/frontiers",
+        "http://ec2-18-185-96-23.eu-central-1.compute.amazonaws.com/frontiers",
         json=frontier_request_dict,
     )
 
@@ -57,7 +57,8 @@ def get_frontier(uuid):
 if not os.path.isfile("uuid"):
     init_crawler()
 
-frontier_response = get_frontier(get_uuid())
-print(frontier_response)
+# todo
+# frontier_response = get_frontier(get_uuid())
+# print(frontier_response)
 
 
