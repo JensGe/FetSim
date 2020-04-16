@@ -7,7 +7,7 @@ def main():
 
         frontier_list = websch.get_frontier(uuid)
 
-        processed_list = fetch.simulate_fetch(frontier_list)
+        processed_list = fetch.simulate_full_fetch(frontier_list)
 
         datsav.submit_processed_list(processed_list)
 
