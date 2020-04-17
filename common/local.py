@@ -1,7 +1,7 @@
 import pickle
 import os.path
 
-from app import settings as s
+from common import settings as s
 
 
 def file_exists(file_string):

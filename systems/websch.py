@@ -1,7 +1,6 @@
 import requests
 
-
-from app import settings, local, helper
+from common import settings, helper, local
 
 
 def websch_uuid_exists():

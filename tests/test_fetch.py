@@ -1,6 +1,4 @@
-from app import fetch
-
-
+from systems import fetch
 
 
 def test_simulate_parse_url():

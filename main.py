@@ -1,4 +1,4 @@
-from app import websch, fetch, datsav
+from systems import fetch, websch
 
 
 def main():
@@ -9,8 +9,9 @@ def main():
 
         processed_list = fetch.simulate_full_fetch(frontier_list)
 
-        datsav.submit_processed_list(processed_list)
+        # datsav.submit_processed_list(processed_list)
 
 
 if __name__ == "__main__":
-    main()
+    # main()
+    print("hello")

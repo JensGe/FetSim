@@ -1,6 +1,6 @@
 from datetime import datetime
-from time import sleep
-from app import settings as s, generate
+from common import generate
+from common import settings as s
 import random
 from multiprocessing import Pool
 
@@ -17,17 +17,20 @@ def generate_new_url():
         "url": generate.get_random_url(),
         "url_discovery_date": datetime.now(),
         "url_last_visited": None,
+        "url_last_ipv4": None,
+        "url_last_ipv6": None,
     }
 
 
 def simulate_parse_url(url):
-    parsed_list = [
-        {
+    parsed_list = [{
             "url": url["url"],
             "url_discovery_date": url["url_discovery_date"],
-            "url_last_visited": datetime.now(),
+            "url_last_visited": str(datetime.now()),
+            "url_last_ipv4": None,
+            "url_last_ipv6": None,
         }
-    ]
+]
 
     urls_found = s.url_discoveries
     for _ in range(urls_found):
@@ -57,4 +60,14 @@ def simulate_full_fetch(frontier_list):
     )
     p.close()
 
-    return data
+    url_list = []
+    for i in range(len(data)):
+        url_list.extend(data[i])
+
+    response_json = {
+        "uuid": frontier_list["uuid"],
+        "urls_count": len(url_list),
+        "urls": url_list,
+    }
+
+    return response_json

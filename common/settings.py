@@ -15,7 +15,7 @@ uuid_file = "uuid.dat"
 
 # Fetching Simulator
 
-url_discoveries = random.randint(2, 10)
+url_discoveries = random.randint(2, 3)
 internal_discovery_ratio = 0.0
 
 parallel_processes = 10
