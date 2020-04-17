@@ -23,14 +23,15 @@ def generate_new_url():
 
 
 def simulate_parse_url(url):
-    parsed_list = [{
+    parsed_list = [
+        {
             "url": url["url"],
             "url_discovery_date": url["url_discovery_date"],
             "url_last_visited": str(datetime.now()),
             "url_last_ipv4": None,
             "url_last_ipv6": None,
         }
-]
+    ]
 
     urls_found = s.url_discoveries
     for _ in range(urls_found):
@@ -44,30 +45,28 @@ def simulate_parse_url(url):
 
 def simulate_short_term_fetch(url_frontier):
     cumulative_parsed_list = []
-    for url in url_frontier["url_list"]:
+    for url in url_frontier:
         cumulative_parsed_list.extend(simulate_parse_url(url))
         # sleep(url_frontier["fqdn_crawl_delay"] + random.random())
 
     return cumulative_parsed_list
 
 
-def simulate_full_fetch(frontier_list):
+def get_list_of_urls(frontier_list):
+    return [
+        url
+        for url_frontier in frontier_list["url_frontiers"]
+        for url in url_frontier["url_list"]
+    ]
 
+
+def simulate_full_fetch(frontier_list):
     p = Pool(processes=s.parallel_processes)
-    data = p.map(
-        simulate_short_term_fetch,
-        [url_frontier for url_frontier in frontier_list["url_frontiers"]],
-    )
+    data = p.map(simulate_short_term_fetch, get_list_of_urls(frontier_list),)
     p.close()
 
-    url_list = []
-    for i in range(len(data)):
-        url_list.extend(data[i])
-
-    response_json = {
+    return {
         "uuid": frontier_list["uuid"],
-        "urls_count": len(url_list),
-        "urls": url_list,
+        "urls_count": len(data),
+        "urls": data,
     }
-
-    return response_json
