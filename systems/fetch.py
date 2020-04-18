@@ -3,22 +3,21 @@ from common import generate
 from common import settings as s
 import random
 from multiprocessing import Pool
+from time import sleep
 
 
 def generate_new_internal_url(url):
     return {
         "url": generate.get_similar_url(url),
-        "url_discovery_date": datetime.now(),
+        "url_discovery_date": str(datetime.now()),
     }
 
 
 def generate_new_url():
     return {
         "url": generate.get_random_url(),
-        "url_discovery_date": datetime.now(),
+        "url_discovery_date": str(datetime.now()),
         "url_last_visited": None,
-        "url_last_ipv4": None,
-        "url_last_ipv6": None,
     }
 
 
@@ -28,8 +27,6 @@ def simulate_parse_url(url):
             "url": url["url"],
             "url_discovery_date": url["url_discovery_date"],
             "url_last_visited": str(datetime.now()),
-            "url_last_ipv4": None,
-            "url_last_ipv6": None,
         }
     ]
 
@@ -43,30 +40,39 @@ def simulate_parse_url(url):
     return parsed_list
 
 
-def simulate_short_term_fetch(url_frontier):
+def simulate_short_term_fetch(short_term_frontier):
     cumulative_parsed_list = []
-    for url in url_frontier:
+    for url in short_term_frontier["url_list"]:
         cumulative_parsed_list.extend(simulate_parse_url(url))
-        # sleep(url_frontier["fqdn_crawl_delay"] + random.random())
+        sleep(short_term_frontier["fqdn_crawl_delay"] * s.crawling_speed_factor)
 
     return cumulative_parsed_list
 
 
-def get_list_of_urls(frontier_list):
-    return [
-        url
-        for url_frontier in frontier_list["url_frontiers"]
-        for url in url_frontier["url_list"]
-    ]
+# def get_list_of_urls(frontier_list):
+#     temp_url_list = [
+#         url
+#         for url_frontier in frontier_list["url_frontiers"]
+#         for url in url_frontier["url_list"]
+#     ]
+#
+#     url_list = []
+#     for item in temp_url_list:
+#         item["fqdn_crawl_delay"] = frontier_list["fqdn_crawl_delay"]
+#
+#     return url_list
+
+def get_list_of_frontiers(frontier_list):
+    return [url_frontier for url_frontier in frontier_list["url_frontiers"]]
 
 
-def simulate_full_fetch(frontier_list):
+def simulate_full_fetch(frontier_partition):
     p = Pool(processes=s.parallel_processes)
-    data = p.map(simulate_short_term_fetch, get_list_of_urls(frontier_list),)
+    url_data = p.map(simulate_short_term_fetch, get_list_of_frontiers(frontier_partition))
     p.close()
 
     return {
-        "uuid": frontier_list["uuid"],
-        "urls_count": len(data),
-        "urls": data,
+        "uuid": frontier_partition["uuid"],
+        "urls_count": len(url_data),
+        "urls": url_data[0],
     }

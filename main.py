@@ -1,17 +1,15 @@
-from systems import fetch, websch
+from systems import fetch, websch, datsav
 
 
 def main():
-    while True:
-        uuid = websch.init_crawler()
+    uuid = websch.init_crawler()
 
-        frontier_list = websch.get_frontier(uuid)
+    frontier_partition = websch.get_frontier_partition(uuid)
 
-        processed_list = fetch.simulate_full_fetch(frontier_list)
+    response_url_list = fetch.simulate_full_fetch(frontier_partition)
 
-        # datsav.submit_processed_list(processed_list)
+    datsav.submit_processed_list(response_url_list)
 
 
 if __name__ == "__main__":
-    # main()
-    print("hello")
+    main()

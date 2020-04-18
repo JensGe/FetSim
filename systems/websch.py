@@ -14,7 +14,7 @@ def websch_uuid_exists():
         return False
 
 
-def get_frontier(uuid):
+def get_frontier_partition(uuid):
     frontier_request_dict = {
         "crawler_uuid": uuid,
     }
