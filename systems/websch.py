@@ -17,6 +17,7 @@ def websch_uuid_exists():
 def get_frontier_partition(uuid):
     frontier_request_dict = {
         "crawler_uuid": uuid,
+        "amount": 1,
     }
 
     frontier_response = requests.post(

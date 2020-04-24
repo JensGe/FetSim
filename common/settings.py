@@ -24,3 +24,5 @@ internal_discovery_ratio = 0.0
 
 parallel_processes = 10
 crawling_speed_factor = 1.0
+
+iterations = 5

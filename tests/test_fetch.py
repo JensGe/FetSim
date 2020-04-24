@@ -1,9 +1,11 @@
 from systems import fetch
 from datetime import datetime
+import pytest
 
 
-def generate_test_frontier_partition():
-    frontier_partition = {
+@pytest.fixture
+def example_frontier_partition():
+    return {
         "uuid": "12345678-90ab-cdef-0000-000000000000",
         "url_frontiers": [
             {
@@ -105,7 +107,6 @@ def generate_test_frontier_partition():
             },
         ],
     }
-    return frontier_partition
 
 
 def test_simulate_parse_url():
@@ -212,9 +213,8 @@ def test_simulate_short_term_fetch():
         assert isinstance(short_term_fetch_result[i]["url"], str)
 
 
-def test_get_list_of_frontiers():
-    frontier_partition = generate_test_frontier_partition()
-    result_list = fetch.get_list_of_frontiers(frontier_partition)
+def test_get_list_of_frontiers(example_frontier_partition):
+    result_list = fetch.get_list_of_frontiers(example_frontier_partition)
 
     asserted_result_list = [
         {
