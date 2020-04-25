@@ -44,7 +44,7 @@ def simulate_short_term_fetch(short_term_frontier):
     cumulative_parsed_list = []
     for url in short_term_frontier["url_list"]:
         cumulative_parsed_list.extend(simulate_parse_url(url))
-        sleep(short_term_frontier["fqdn_crawl_delay"] * s.crawling_speed_factor)
+        sleep(short_term_frontier["fqdn_crawl_delay"] / s.crawling_speed)
 
     return cumulative_parsed_list
 

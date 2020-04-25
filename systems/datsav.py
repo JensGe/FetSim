@@ -1,10 +1,10 @@
 import requests
 import logging
 
-from common import settings
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
 
 
-def submit_processed_list(submit_list):
-    submit_response = requests.post(url=settings.datsav_submit_url, json=submit_list)
-    logging.debug("Response Code: {}".format(submit_response.status_code))
+def submit_processed_list(submission_endpoint, submit_list):
+    submit_response = requests.post(url=submission_endpoint, json=submit_list)
+    logging.info("Response: {}".format(submit_response.text))
     return submit_response.status_code

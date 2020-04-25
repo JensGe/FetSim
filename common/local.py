@@ -16,12 +16,3 @@ def save_uuid_to_pickle(uuid):
 def get_pickle_uuid():
     with open(s.uuid_file, "rb") as file:
         return pickle.load(file)
-
-
-
-
-
-
-
-
-

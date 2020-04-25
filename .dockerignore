@@ -1,6 +1,9 @@
+.idea
+.pytest_cache
 venv
 tests
 .gitignore
+.dockerignore
 README.md
 Dockerfile
-
+uuid.dat
