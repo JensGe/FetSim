@@ -1,6 +1,6 @@
 import requests
 
-from common import settings, helper, local
+from common import settings as s, helper, local
 import logging
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
@@ -9,7 +9,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
 def websch_uuid_exists():
     uuid = local.get_pickle_uuid()
     frontier_response = requests.patch(
-        settings.websch_crawler_url, json={"uuid": str(uuid)}
+        s.websch_crawler_url, json={"uuid": str(uuid)}
     )
     if frontier_response.status_code == 200:
         return True
@@ -23,11 +23,11 @@ def websch_uuid_exists():
 def get_frontier_partition(uuid):
     frontier_request_dict = {
         "crawler_uuid": uuid,
-        "amount": 1,
+        "amount": s.amount,
     }
 
     frontier_response = requests.post(
-        settings.websch_frontier_url, json=frontier_request_dict,
+        s.websch_frontier_url, json=frontier_request_dict,
     )
 
     frontier_response = frontier_response.json()
@@ -44,7 +44,7 @@ def create_websch_crawler():
     }
 
     new_crawler_response = requests.post(
-        settings.websch_crawler_url, json=create_crawler_dict,
+        s.websch_crawler_url, json=create_crawler_dict,
     )
 
     new_crawler_json = new_crawler_response.json()
@@ -52,8 +52,14 @@ def create_websch_crawler():
     local.save_uuid_to_pickle(new_crawler_json["uuid"])
 
 
+def get_random_urls(amount):
+    return requests.get(
+        s.websch_urls, json={"amount": amount}
+    )
+
+
 def init_crawler():
-    if not local.file_exists(settings.uuid_file):
+    if not local.file_exists(s.uuid_file):
         create_websch_crawler()
 
     if not websch_uuid_exists():

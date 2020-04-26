@@ -2,6 +2,11 @@ import random
 import string
 
 
+def get_fqdn_from_url(url: str):
+    fqdn = url.split("//")[1].split("/")[0]
+    return fqdn
+
+
 def get_random_tld():
     return random.choice(["de", "com", "org", "se", "fr"])
 
@@ -10,14 +15,16 @@ def get_random_fqdn():
     return "www." + get_random_sld() + "." + get_random_tld()
 
 
-def get_random_url():
+def get_random_url(fqdn=None):
+    applied_fqdn = get_random_fqdn() if fqdn is None else fqdn
     return "http://{}/{}{}".format(
-        get_random_fqdn(), get_random_german_text(), get_random_web_filename()
+        applied_fqdn, get_random_german_text(), get_random_web_filename()
     )
 
 
 def get_similar_url(url):
-    pass
+    fqdn = get_fqdn_from_url(url)
+    return get_random_url(fqdn=fqdn)
 
 
 def get_random_web_filename():
