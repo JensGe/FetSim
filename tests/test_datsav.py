@@ -1,4 +1,5 @@
 from systems import datsav
+from common import settings
 import pytest
 
 
@@ -17,6 +18,8 @@ def submit_list():
 
 
 def test_submit_processed_list(submit_list):
-    response = datsav.submit_processed_list(submit_list)
-
+    response = datsav.submit_processed_list(
+        submission_endpoint=settings.datsav_submit, submit_list=submit_list
+    )
+    # Test with Test Database?
     assert response == 202

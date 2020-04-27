@@ -11,6 +11,7 @@ websch_frontier_url = (
 websch_urls = (
     "http://ec2-18-185-96-23.eu-central-1.compute.amazonaws.com/urls"
 )
+datsav_submit = "http://ec2-18-195-144-15.eu-central-1.compute.amazonaws.com/submit"
 
 # Files
 uuid_file = "uuid.dat"
