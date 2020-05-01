@@ -12,19 +12,19 @@ def main():
 
         logging.info("### Start Downloading Frontier")
         frontier_partition = websch.get_frontier_partition(uuid)
-        random_urls = (
-            websch.get_random_urls(frontier_partition["urls_count"])
-            * settings.max_links_per_page
-            / settings.outgoing_link_ratio
-        )
+
         logging.info(
-            "#   Frontier Amount: {}".format(
+            "### Frontiers Downloaded: {}".format(
                 str(len(frontier_partition["url_frontiers"]))
             )
         )
-        logging.info("### Finished Downloading Frontier")
+        # random_urls = websch.get_random_urls(
+        #     frontier_partition["urls_count"]
+        #     * settings.max_links_per_page
+        #     / settings.outgoing_link_ratio
+        # )
+        # logging.info("### Random Urls Downloaded: {}".format(str(len(random_urls))))
 
-        # Todo check if frontier_partition is empty
         logging.info("### Start Simulating Fetch")
         response_url_list = fetch.simulate_full_fetch(frontier_partition)
         logging.info("#   Response Url List: {}".format(str(response_url_list)))

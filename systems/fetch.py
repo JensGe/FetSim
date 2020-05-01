@@ -13,20 +13,21 @@ def generate_new_internal_url(url):
         "url_discovery_date": str(datetime.now()),
         "url_last_visited": None,
         "url_blacklisted": False,
-        "url_bot_excluded": False
+        "url_bot_excluded": False,
     }
 
 
-def generate_new_url():
-    fqdn = generate.get_random_fqdn()
-    url = generate.get_random_url(fqdn=fqdn)
+def generate_existing_url(fqdn=None):
+    url = generate.get_random_real_url(fqdn=fqdn)
+    fqdn = generate.get_fqdn_from_url(url)
+
     return {
         "url": url,
         "fqdn": fqdn,
         "url_discovery_date": str(datetime.now()),
         "url_last_visited": None,
         "url_blacklisted": False,
-        "url_bot_excluded": False
+        "url_bot_excluded": False,
     }
 
 
@@ -38,16 +39,40 @@ def simulate_parse_url(url):
             "url_discovery_date": url["url_discovery_date"],
             "url_last_visited": str(datetime.now()),
             "url_blacklisted": url["url_blacklisted"],
-            "url_bot_excluded": url["url_bot_excluded"]
+            "url_bot_excluded": url["url_bot_excluded"],
         }
     ]
 
-    urls_found = s.max_links_per_page
-    for _ in range(urls_found):
-        if random.random() < s.remaining_link_ratio:
+    simulated_link_amount = random.randint(s.min_links_per_page, s.max_links_per_page)
+    for _ in range(simulated_link_amount):
+        internal_randomness = random.random()
+        link_knowledge_randomness = random.random()
+
+        # internal Link generation
+        if (
+            internal_randomness < s.internal_link_ratio
+            and link_knowledge_randomness < s.internal_known_ratio
+        ):
             parsed_list.extend(generate_new_internal_url(url))
-        else:
-            parsed_list.append(generate_new_url())
+
+        if (
+            internal_randomness < s.internal_link_ratio
+            and link_knowledge_randomness >= s.internal_known_ratio
+        ):
+            parsed_list.extend(generate_existing_url(fqdn=url["fqdn"]))
+
+        # external Link generation
+        if (
+            internal_randomness < s.external_link_ratio
+            and link_knowledge_randomness < s.external_known_ratio
+        ):
+            parsed_list.extend(generate.get_random_url())
+
+        if (
+            internal_randomness < s.external_link_ratio
+            and link_knowledge_randomness < s.external_known_ratio
+        ):
+            parsed_list.extend(generate_existing_url())
 
     return parsed_list
 
@@ -61,13 +86,11 @@ def simulate_short_term_fetch(short_term_frontier):
     return cumulative_parsed_list
 
 
-def get_list_of_frontiers(frontier_list):
-    return [url_frontier for url_frontier in frontier_list["url_frontiers"]]
-
-
 def simulate_full_fetch(frontier_partition):
     p = Pool(processes=s.parallel_processes)
-    url_data = p.map(simulate_short_term_fetch, get_list_of_frontiers(frontier_partition))
+    url_data = p.map(
+        simulate_short_term_fetch, simulate_short_term_fetch(frontier_partition)
+    )
     p.close()
 
     return {

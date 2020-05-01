@@ -20,8 +20,13 @@ uuid_file = "uuid.dat"
 # Fetching Simulator
 max_links_per_page = 10
 min_links_per_page = 3
-remaining_link_ratio = 0.95                         # Check Literature
-outgoing_link_ratio = 1 - remaining_link_ratio
+
+internal_link_ratio = 0.8       # Check Literature
+internal_known_ratio = 0.2
+
+external_link_ratio = 1 - internal_link_ratio
+external_known_ratio = 0.02
+
 
 parallel_processes = 10
 crawling_speed = 10.0

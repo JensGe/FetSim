@@ -1,5 +1,7 @@
 import random
 import string
+import requests
+from common import settings as s
 
 
 def get_fqdn_from_url(url: str):
@@ -20,6 +22,12 @@ def get_random_url(fqdn=None):
     return "http://{}/{}{}".format(
         applied_fqdn, get_random_german_text(), get_random_web_filename()
     )
+
+
+def get_random_real_url(fqdn=None):
+    return requests.get(
+        s.websch_urls, json={"amount": 1, "fqdn": fqdn}
+    ).json()
 
 
 def get_similar_url(url):

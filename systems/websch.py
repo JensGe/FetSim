@@ -52,12 +52,6 @@ def create_websch_crawler():
     local.save_uuid_to_pickle(new_crawler_json["uuid"])
 
 
-def get_random_urls(amount):
-    return requests.get(
-        s.websch_urls, json={"amount": amount}
-    )
-
-
 def init_crawler():
     if not local.file_exists(s.uuid_file):
         create_websch_crawler()
