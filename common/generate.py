@@ -2,10 +2,11 @@ import random
 import string
 import requests
 from common import settings as s
+from common import pyd_models as pyd
 
 
-def get_fqdn_from_url(url: str):
-    fqdn = url.split("//")[1].split("/")[0]
+def get_fqdn_from_url(url: pyd.Url):
+    fqdn = url.url.split("//")[1].split("/")[0]
     return fqdn
 
 
@@ -17,20 +18,32 @@ def get_random_fqdn():
     return "www." + get_random_sld() + "." + get_random_tld()
 
 
-def get_random_url(fqdn=None):
+def get_random_url(fqdn=None) -> pyd.Url:
     applied_fqdn = get_random_fqdn() if fqdn is None else fqdn
-    return "http://{}/{}{}".format(
-        applied_fqdn, get_random_german_text(), get_random_web_filename()
+    return pyd.Url(
+        url="http://{}/{}{}".format(
+            applied_fqdn, get_random_german_text(), get_random_web_filename()
+        ),
+        fqdn=applied_fqdn,
     )
 
 
-def get_random_real_url(fqdn=None):
-    return requests.get(
-        s.websch_urls, json={"amount": 1, "fqdn": fqdn}
-    ).json()
+def get_random_existing_url(fqdn: str = None) -> pyd.Url:
+
+    if fqdn is None:
+        random_url = requests.get(s.websch_urls_endpoint, json={"amount": 1}).json()
+
+    else:
+        random_url = requests.get(
+            s.websch_urls_endpoint, json={"amount": 1, "fqdn": fqdn}
+        ).json()
+
+    return pyd.Url(
+        url=random_url["url_list"][0]["url"], fqdn=random_url["url_list"][0]["fqdn"]
+    )
 
 
-def get_similar_url(url):
+def get_similar_url(url: pyd.Url) -> pyd.Url:
     fqdn = get_fqdn_from_url(url)
     return get_random_url(fqdn=fqdn)
 

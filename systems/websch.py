@@ -1,6 +1,7 @@
 import requests
 
 from common import settings as s, helper, local
+from common import pyd_models as pyd
 import logging
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
@@ -9,7 +10,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
 def websch_uuid_exists():
     uuid = local.get_pickle_uuid()
     frontier_response = requests.patch(
-        s.websch_crawler_url, json={"uuid": str(uuid)}
+        s.websch_crawler_endpoint, json={"uuid": str(uuid)}
     )
     if frontier_response.status_code == 200:
         return True
@@ -26,12 +27,10 @@ def get_frontier_partition(uuid):
         "amount": s.amount,
     }
 
-    frontier_response = requests.post(
-        s.websch_frontier_url, json=frontier_request_dict,
-    )
-
-    frontier_response = frontier_response.json()
-    return frontier_response
+    response = requests.post(
+        s.websch_frontier_endpoint, json=frontier_request_dict
+    ).json()
+    return pyd.FrontierResponse(**response)
 
 
 def create_websch_crawler():
@@ -44,7 +43,7 @@ def create_websch_crawler():
     }
 
     new_crawler_response = requests.post(
-        s.websch_crawler_url, json=create_crawler_dict,
+        s.websch_crawler_endpoint, json=create_crawler_dict,
     )
 
     new_crawler_json = new_crawler_response.json()

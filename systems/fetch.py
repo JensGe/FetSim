@@ -1,100 +1,110 @@
-from datetime import datetime
 from common import generate
 from common import settings as s
-import random
+from common import pyd_models as pyd
+
 from multiprocessing import Pool
 from time import sleep
+from datetime import datetime
+from typing import List
+
+import random
+import logging
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
 
 
-def generate_new_internal_url(url):
-    return {
-        "url": generate.get_similar_url(url["url"]),
-        "fqdn": generate.get_fqdn_from_url(url["url"]),
-        "url_discovery_date": str(datetime.now()),
-        "url_last_visited": None,
-        "url_blacklisted": False,
-        "url_bot_excluded": False,
-    }
+def new_internal_cond(internal_vs_external_randomness, known_vs_unknown_randomness):
+    return (
+        internal_vs_external_randomness < s.internal_vs_external_threshold
+        and known_vs_unknown_randomness < s.new_vs_existing_threshold
+    )
 
 
-def generate_existing_url(fqdn=None):
-    url = generate.get_random_real_url(fqdn=fqdn)
-    fqdn = generate.get_fqdn_from_url(url)
-
-    return {
-        "url": url,
-        "fqdn": fqdn,
-        "url_discovery_date": str(datetime.now()),
-        "url_last_visited": None,
-        "url_blacklisted": False,
-        "url_bot_excluded": False,
-    }
+def existing_internal_cond(internal_vs_external_randomness, known_vs_unknown_randomness):
+    return (
+            internal_vs_external_randomness < s.internal_vs_external_threshold
+            and known_vs_unknown_randomness >= s.new_vs_existing_threshold
+        )
 
 
-def simulate_parse_url(url):
-    parsed_list = [
-        {
-            "url": url["url"],
-            "fqdn": url["fqdn"],
-            "url_discovery_date": url["url_discovery_date"],
-            "url_last_visited": str(datetime.now()),
-            "url_blacklisted": url["url_blacklisted"],
-            "url_bot_excluded": url["url_bot_excluded"],
-        }
-    ]
+def new_external_cond(internal_vs_external_randomness, known_vs_unknown_randomness):
+    return (
+        internal_vs_external_randomness >= s.internal_vs_external_threshold
+        and known_vs_unknown_randomness < s.new_vs_existing_threshold
+    )
+
+
+def existing_external_cond(internal_vs_external_randomness, known_vs_unknown_randomness):
+    return (
+            internal_vs_external_randomness >= s.internal_vs_external_threshold
+            and known_vs_unknown_randomness >= s.new_vs_existing_threshold
+        )
+
+
+def generate_new_internal_url(url: pyd.Url):
+    return pyd.Url(
+        url=generate.get_similar_url(url).url,
+        fqdn=generate.get_fqdn_from_url(url),
+        url_discovery_date=str(datetime.now()),
+        url_last_visited=None,
+        url_blacklisted=False,
+        url_bot_excluded=False,
+    )
+
+
+def generate_existing_url(fqdn: str = None):
+    url = generate.get_random_existing_url(fqdn=fqdn)
+
+    return pyd.Url(
+        url=url.url,
+        fqdn=url.fqdn,
+        url_discovery_date=str(datetime.now()),
+        url_last_visited=None,
+        url_blacklisted=False,
+        url_bot_excluded=False,
+    )
+
+
+def simulate_parse_url(url: pyd.Url) -> List[pyd.Url]:
+    parsed_list = [url]
 
     simulated_link_amount = random.randint(s.min_links_per_page, s.max_links_per_page)
     for _ in range(simulated_link_amount):
-        internal_randomness = random.random()
-        link_knowledge_randomness = random.random()
+        internal_external_rand = random.random()
+        known_unknown_rand = random.random()
 
-        # internal Link generation
-        if (
-            internal_randomness < s.internal_link_ratio
-            and link_knowledge_randomness < s.internal_known_ratio
-        ):
-            parsed_list.extend(generate_new_internal_url(url))
+        if new_internal_cond(internal_external_rand, known_unknown_rand):
+            parsed_list.append(generate_new_internal_url(url))
 
-        if (
-            internal_randomness < s.internal_link_ratio
-            and link_knowledge_randomness >= s.internal_known_ratio
-        ):
-            parsed_list.extend(generate_existing_url(fqdn=url["fqdn"]))
+        if existing_internal_cond(internal_external_rand, known_unknown_rand):
+            parsed_list.append(generate_existing_url(fqdn=url.fqdn))
 
-        # external Link generation
-        if (
-            internal_randomness < s.external_link_ratio
-            and link_knowledge_randomness < s.external_known_ratio
-        ):
-            parsed_list.extend(generate.get_random_url())
+        if new_external_cond(internal_external_rand, known_unknown_rand):
+            parsed_list.append(generate.get_random_url())
 
-        if (
-            internal_randomness < s.external_link_ratio
-            and link_knowledge_randomness < s.external_known_ratio
-        ):
-            parsed_list.extend(generate_existing_url())
+        if existing_external_cond(internal_external_rand, known_unknown_rand):
+            parsed_list.append(generate_existing_url())
 
     return parsed_list
 
 
-def simulate_short_term_fetch(short_term_frontier):
+def simulate_short_term_fetch(url_frontier_list: pyd.UrlFrontier) -> List[pyd.Url]:
     cumulative_parsed_list = []
-    for url in short_term_frontier["url_list"]:
+    for url in url_frontier_list.url_list:
         cumulative_parsed_list.extend(simulate_parse_url(url))
-        sleep(short_term_frontier["fqdn_crawl_delay"] / s.crawling_speed)
+
+        sleep(url_frontier_list.fqdn_crawl_delay / s.crawling_speed)
 
     return cumulative_parsed_list
 
 
-def simulate_full_fetch(frontier_partition):
+def simulate_full_fetch(frontier_response: pyd.FrontierResponse):
     p = Pool(processes=s.parallel_processes)
-    url_data = p.map(
-        simulate_short_term_fetch, simulate_short_term_fetch(frontier_partition)
-    )
+    url_data = p.map(simulate_short_term_fetch, frontier_response.url_frontiers)
     p.close()
 
-    return {
-        "uuid": frontier_partition["uuid"],
-        "urls_count": len(url_data[0]),
-        "urls": url_data[0],
-    }
+    logging.info(url_data[0])
+
+    return pyd.SimulatedParsedList(
+        uuid=frontier_response.uuid, urls_count=len(url_data[0]), urls=url_data[0]
+    )
