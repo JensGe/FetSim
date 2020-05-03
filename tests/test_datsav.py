@@ -14,6 +14,26 @@ def submit_list():
     return pyd.SimulatedParsedList(
         uuid="12345678-90ab-cdef-0000-000000000000",
         urls_count=4,
+        fqdns=[
+            {
+                "fqdn": "www.example.fr",
+                "tld": "fr",
+                "fqdn_last_ipv4": "123.456.789.0",
+                "fqdn_last_ipv6": "2001:DB8::CF5C",
+                "fqdn_pagerank": 0.00001,
+                "fqdn_crawl_delay": 5,
+                "fqdn_url_count": 2,
+            },
+            {
+                "fqdn": "www.example.cn",
+                "tld": "cn",
+                "fqdn_last_ipv4": "126.456.789.2",
+                "fqdn_last_ipv6": "2001:DB8::C25C",
+                "fqdn_pagerank": 0.0,
+                "fqdn_crawl_delay": None,
+                "fqdn_url_count": 2,
+            },
+        ],
         urls=[
             {"url": "https://www.example.fr/abcefg", "fqdn": "www.example.fr"},
             {"url": "https://www.example.fr/hijklm", "fqdn": "www.example.fr"},
@@ -35,34 +55,56 @@ def test_conversion_list_to_dict(submit_list):
     asserted_dict = {
         "uuid": "12345678-90ab-cdef-0000-000000000000",
         "urls_count": 4,
+        "fqdns": [
+            {
+                "fqdn": "www.example.fr",
+                "tld": "fr",
+                "fqdn_last_ipv4": "123.456.789.0",
+                "fqdn_last_ipv6": "2001:DB8::CF5C",
+                "fqdn_pagerank": 0.00001,
+                "fqdn_crawl_delay": 5,
+                "fqdn_url_count": 2,
+                "url_list": []
+            },
+            {
+                "fqdn": "www.example.cn",
+                "tld": "cn",
+                "fqdn_last_ipv4": "126.456.789.2",
+                "fqdn_last_ipv6": "2001:DB8::C25C",
+                "fqdn_pagerank": 0.0,
+                "fqdn_crawl_delay": None,
+                "fqdn_url_count": 2,
+                "url_list": []
+            },
+        ],
         "urls": [
             {
-                "url": "https://www.example.com/abcefg",
-                "fqdn": "www.example.com",
+                "url": "https://www.example.fr/abcefg",
+                "fqdn": "www.example.fr",
                 "url_discovery_date": None,
                 "url_last_visited": None,
                 "url_blacklisted": None,
                 "url_bot_excluded": None,
             },
             {
-                "url": "https://www.example.com/hijklm",
-                "fqdn": "www.example.com",
+                "url": "https://www.example.fr/hijklm",
+                "fqdn": "www.example.fr",
                 "url_discovery_date": None,
                 "url_last_visited": None,
                 "url_blacklisted": None,
                 "url_bot_excluded": None,
             },
             {
-                "url": "https://www.example.de/abcefg",
-                "fqdn": "www.example.de",
+                "url": "https://www.example.cn/abcefg",
+                "fqdn": "www.example.cn",
                 "url_discovery_date": None,
                 "url_last_visited": None,
                 "url_blacklisted": None,
                 "url_bot_excluded": None,
             },
             {
-                "url": "https://www.example.de/hijklm",
-                "fqdn": "www.example.de",
+                "url": "https://www.example.cn/hijklm",
+                "fqdn": "www.example.cn",
                 "url_discovery_date": None,
                 "url_last_visited": None,
                 "url_blacklisted": None,

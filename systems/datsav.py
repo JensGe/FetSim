@@ -5,7 +5,7 @@ from common import pyd_models as pyd
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
 
 
-def url_dict(url: pyd.Url):
+def url_dict(url: pyd.Url) -> dict:
     discovery_date = (
         url.url_discovery_date
         if url.url_discovery_date is None
@@ -27,10 +27,24 @@ def url_dict(url: pyd.Url):
     }
 
 
+def fqdn_dict(fqdn: pyd.UrlFrontier) -> dict:
+    return {
+        "fqdn": fqdn.fqdn,
+        "tld": fqdn.tld,
+        "fqdn_last_ipv4": fqdn.fqdn_last_ipv4,
+        "fqdn_last_ipv6": fqdn.fqdn_last_ipv6,
+        "fqdn_pagerank": fqdn.fqdn_pagerank,
+        "fqdn_crawl_delay": fqdn.fqdn_crawl_delay,
+        "fqdn_url_count": fqdn.fqdn_url_count,
+        "url_list": []
+    }
+
+
 def convert_parsed_list_to_dict(submit_list: pyd.SimulatedParsedList):
     return {
         "uuid": str(submit_list.uuid),
         "urls_count": submit_list.urls_count,
+        "fqdns": [fqdn_dict(fqdn) for fqdn in submit_list.fqdns],
         "urls": [url_dict(url) for url in submit_list.urls],
     }
 

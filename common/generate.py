@@ -1,8 +1,29 @@
 import random
 import string
 import requests
+from datetime import datetime
+
 from common import settings as s
 from common import pyd_models as pyd
+
+
+def random_ipv4():
+    return "{}.{}.{}.{}".format(
+        str(random.randint(0, 256)),
+        str(random.randint(0, 256)),
+        str(random.randint(0, 256)),
+        str(random.randint(0, 256)),
+    )
+
+
+def random_hex():
+    return random.choice(string.digits + "ABCDEF")
+
+
+def random_example_ipv6():
+    return "2001:DB8::{}{}{}{}".format(
+        random_hex(), random_hex(), random_hex(), random_hex()
+    )
 
 
 def get_fqdn_from_url(url: pyd.Url):
@@ -25,6 +46,7 @@ def get_random_url(fqdn=None) -> pyd.Url:
             applied_fqdn, get_random_german_text(), get_random_web_filename()
         ),
         fqdn=applied_fqdn,
+        url_discovery_date=datetime.now()
     )
 
 
@@ -109,3 +131,57 @@ def get_random_german_text(length: int = None):
         length = random.randint(10, 16)
 
     return "".join(random.choices(population=chars, weights=distribution, k=length))
+
+
+def random_pagerank(rank: int = random.randint(0, 14470000000)):
+    # Source Springer: Inf Retrieval (2006) 9: 134 Table 1
+
+    if rank <= 10:
+        random_pagerank = random.uniform(8.0, 10.0)
+    elif rank <= 100:
+        random_pagerank = random.uniform(4.0, 8.0)
+    elif rank <= 1000:
+        random_pagerank = random.uniform(2.0, 4.0)
+    elif rank <= 10000:
+        random_pagerank = random.uniform(1.0, 2.0)
+    elif rank <= 100000:
+        random_pagerank = random.uniform(0.2, 1.0)
+    elif rank <= 1000000:
+        random_pagerank = random.uniform(0.01, 0.2)
+    elif rank <= 10000000:
+        random_pagerank = random.uniform(0.001, 0.01)
+    elif rank <= 100000000:
+        random_pagerank = random.uniform(0.0001, 0.001)
+    elif rank <= 1000000000:
+        random_pagerank = random.uniform(0.00001, 0.0001)
+    else:
+        random_pagerank = random.uniform(0.0, 0.00001)
+
+    return random_pagerank
+
+
+def random_crawl_delay():
+    # Source: (Kolay et al. 2008, S. 1171 f.)
+
+    crawl_delays = [None, 1, 2, 3, 5, 10, 15, 20, 30, 45, 50, 60, 120, 200, 300, 600, 1000]
+    distibution = [
+        0.80000,
+        0.00800,
+        0.00450,
+        0.00450,
+        0.01950,
+        0.05400,
+        0.00450,
+        0.01900,
+        0.01500,
+        0.00800,
+        0.00100,
+        0.01800,
+        0.00800,
+        0.00450,
+        0.00300,
+        0.00150,
+        0.00080,
+    ]
+
+    return random.choices(population=crawl_delays, weights=distibution)[0]

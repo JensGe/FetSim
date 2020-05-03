@@ -1,4 +1,4 @@
-from common import generate
+from common import generate as gen
 from common import settings as s
 from common import pyd_models as pyd
 
@@ -20,11 +20,13 @@ def new_internal_cond(internal_vs_external_randomness, known_vs_unknown_randomne
     )
 
 
-def existing_internal_cond(internal_vs_external_randomness, known_vs_unknown_randomness):
+def existing_internal_cond(
+    internal_vs_external_randomness, known_vs_unknown_randomness
+):
     return (
-            internal_vs_external_randomness < s.internal_vs_external_threshold
-            and known_vs_unknown_randomness >= s.new_vs_existing_threshold
-        )
+        internal_vs_external_randomness < s.internal_vs_external_threshold
+        and known_vs_unknown_randomness >= s.new_vs_existing_threshold
+    )
 
 
 def new_external_cond(internal_vs_external_randomness, known_vs_unknown_randomness):
@@ -34,17 +36,19 @@ def new_external_cond(internal_vs_external_randomness, known_vs_unknown_randomne
     )
 
 
-def existing_external_cond(internal_vs_external_randomness, known_vs_unknown_randomness):
+def existing_external_cond(
+    internal_vs_external_randomness, known_vs_unknown_randomness
+):
     return (
-            internal_vs_external_randomness >= s.internal_vs_external_threshold
-            and known_vs_unknown_randomness >= s.new_vs_existing_threshold
-        )
+        internal_vs_external_randomness >= s.internal_vs_external_threshold
+        and known_vs_unknown_randomness >= s.new_vs_existing_threshold
+    )
 
 
 def generate_new_internal_url(url: pyd.Url):
     return pyd.Url(
-        url=generate.get_similar_url(url).url,
-        fqdn=generate.get_fqdn_from_url(url),
+        url=gen.get_similar_url(url).url,
+        fqdn=gen.get_fqdn_from_url(url),
         url_discovery_date=str(datetime.now()),
         url_last_visited=None,
         url_blacklisted=False,
@@ -53,7 +57,7 @@ def generate_new_internal_url(url: pyd.Url):
 
 
 def generate_existing_url(fqdn: str = None):
-    url = generate.get_random_existing_url(fqdn=fqdn)
+    url = gen.get_random_existing_url(fqdn=fqdn)
 
     return pyd.Url(
         url=url.url,
@@ -80,7 +84,7 @@ def simulate_parse_url(url: pyd.Url) -> List[pyd.Url]:
             parsed_list.append(generate_existing_url(fqdn=url.fqdn))
 
         if new_external_cond(internal_external_rand, known_unknown_rand):
-            parsed_list.append(generate.get_random_url())
+            parsed_list.append(gen.get_random_url())
 
         if existing_external_cond(internal_external_rand, known_unknown_rand):
             parsed_list.append(generate_existing_url())
@@ -89,22 +93,82 @@ def simulate_parse_url(url: pyd.Url) -> List[pyd.Url]:
 
 
 def simulate_short_term_fetch(url_frontier_list: pyd.UrlFrontier) -> List[pyd.Url]:
+    simulated_crawl_delay_time = (
+        (10 / s.crawling_speed)
+        if url_frontier_list.fqdn_crawl_delay is None
+        else url_frontier_list.fqdn_crawl_delay / s.crawling_speed
+    )
+
     cumulative_parsed_list = []
     for url in url_frontier_list.url_list:
         cumulative_parsed_list.extend(simulate_parse_url(url))
-
-        sleep(url_frontier_list.fqdn_crawl_delay / s.crawling_speed)
+        sleep(simulated_crawl_delay_time)
 
     return cumulative_parsed_list
 
 
-def simulate_full_fetch(frontier_response: pyd.FrontierResponse):
-    p = Pool(processes=s.parallel_processes)
-    url_data = p.map(simulate_short_term_fetch, frontier_response.url_frontiers)
-    p.close()
+def simulate_fqdn_parse(url_frontier_list: pyd.UrlFrontier) -> pyd.UrlFrontier:
+    url_frontier_list.fqdn_last_ipv4 = (
+        gen.random_ipv4()
+        if url_frontier_list.fqdn_last_ipv4 is None
+        else url_frontier_list.fqdn_last_ipv4
+    )
 
-    logging.info(url_data[0])
+    url_frontier_list.fqdn_last_ipv6 = (
+        gen.random_example_ipv6()
+        if url_frontier_list.fqdn_last_ipv6 is None
+        else url_frontier_list.fqdn_last_ipv6
+    )
+
+    url_frontier_list.fqdn_pagerank = (
+        gen.random_pagerank()
+        if url_frontier_list.fqdn_pagerank is None
+        else url_frontier_list.fqdn_pagerank
+    )
+
+    url_frontier_list.fqdn_crawl_delay = (
+        gen.random_crawl_delay()
+        if url_frontier_list.fqdn_crawl_delay is None
+        else url_frontier_list.fqdn_crawl_delay
+    )
+
+    return url_frontier_list
+
+
+def simulate_full_fetch(long_term_frontier: pyd.FrontierResponse):
+
+    logging.debug("Long Term Frontier: {}".format(long_term_frontier))
+
+    fqdn_pool = Pool(processes=s.parallel_processes)
+    url_frontier_list = fqdn_pool.map(
+        simulate_fqdn_parse, long_term_frontier.url_frontiers
+    )
+    fqdn_pool.close()
+
+    logging.debug("URL Frontier List gen: {}".format(url_frontier_list))
+
+    processed_frontier = pyd.FrontierResponse(
+        uuid=long_term_frontier.uuid,
+        response_url=long_term_frontier.response_url,
+        latest_return=long_term_frontier.latest_return,
+        url_frontiers_count=long_term_frontier.url_frontiers_count,
+        urls_count=long_term_frontier.urls_count,
+        url_frontiers=url_frontier_list,
+    )
+
+    logging.debug("URL Frontier List ins: {}".format(processed_frontier.url_frontiers))
+
+    url_pool = Pool(processes=s.parallel_processes)
+    url_data = url_pool.map(simulate_short_term_fetch, processed_frontier.url_frontiers)
+    url_pool.close()
+
+    flat_url_data = [url for url_list in url_data for url in url_list]
+
+    logging.debug("Url Data: {}".format(flat_url_data))
 
     return pyd.SimulatedParsedList(
-        uuid=frontier_response.uuid, urls_count=len(url_data[0]), urls=url_data[0]
+        uuid=long_term_frontier.uuid,
+        urls_count=len(flat_url_data),
+        fqdns=processed_frontier.url_frontiers,
+        urls=flat_url_data,
     )

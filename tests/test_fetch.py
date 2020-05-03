@@ -1,7 +1,7 @@
 from systems import fetch
 from common import pyd_models as pyd
 from common import settings as s
-from common.pyd_models import HttpUrl
+from common.pyd_models import HttpUrl, datetime
 
 import pytest
 from typing import List
@@ -115,8 +115,8 @@ def example_frontier_partition():
 
 def test_simulate_parse_url():
     url = pyd.Url(
-        url="http://www.abc.de/html/index",
-        fqdn="www.abc.de",
+        url="http://www.example.de/html/index",
+        fqdn="www.example.de",
         url_discovery_date=None,
         url_last_visited="2020-01-01T06:00:00",
         rl_blacklisted=False,
@@ -131,76 +131,100 @@ def test_simulate_parse_url():
 
 
 def test_simulate_fetch():
-    frontier_partition = {
-        "uuid": "12345678-90ab-cdef-0000-000000000000",
-        "response_url": "http://www.example.com/submit",
-        "latest_return": "2020-10-10T23:00:00.000000",
-        "url_frontiers_count": 1,
-        "urls_count": 1,
-        "url_frontiers": [
-            {
-                "fqdn": "www.abc.de",
-                "tld": "de",
-                "fqdn_last_ipv4": "123.456.78.90",
-                "fqdn_last_ipv6": "2001:DB8::1234",
-                "fqdn_pagerank": 0.00001,
-                "fqdn_crawl_delay": 5,
-                "fqdn_url_count": 1,
-                "url_list": [
-                    {
-                        "url": "http://www.abc.de/html/index",
-                        "fqdn": "www.abc.de",
-                        "url_discovery_date": None,
-                        "url_last_visited": "2020-01-01T06:00:00",
-                        "url_blacklisted": False,
-                        "url_bot_excluded": False,
-                    },
+    frontier_partition = pyd.FrontierResponse(
+        uuid="12345678-90ab-cdef-0000-000000000000",
+        response_url="http://www.example.com/submit",
+        latest_return="2020-10-10T23:00:00.000000",
+        url_frontiers_count=2,
+        urls_count=2,
+        url_frontiers=[
+            pyd.UrlFrontier(
+                fqdn="www.example.de",
+                tld="de",
+                fqdn_last_ipv4="123.456.78.90",
+                fqdn_last_ipv6="2001:DB8::1234",
+                fqdn_pagerank=0.00001,
+                fqdn_crawl_delay=5,
+                fqdn_url_count=1,
+                url_list=[
+                    pyd.Url(
+                        url="http://www.example.de/html/index",
+                        fqdn="www.example.de",
+                        url_discovery_date=None,
+                        url_last_visited="2020-01-01T06:00:00",
+                        url_blacklisted=False,
+                        url_bot_excluded=False,
+                    ),
                 ],
-            },
+            ),
+            pyd.UrlFrontier(
+                fqdn="www.example.com",
+                tld="com",
+                fqdn_last_ipv4="123.456.78.90",
+                fqdn_last_ipv6="2001:DB8::1234",
+                fqdn_pagerank=0.00001,
+                fqdn_crawl_delay=5,
+                fqdn_url_count=1,
+                url_list=[
+                    pyd.Url(
+                        url="http://www.example.com/html/index",
+                        fqdn="www.example.com",
+                        url_discovery_date=None,
+                        url_last_visited="2020-01-01T06:00:00",
+                        url_blacklisted=False,
+                        url_bot_excluded=False,
+                    ),
+                ],
+            )
+
         ],
-    }
+    )
 
     processed_list = fetch.simulate_full_fetch(frontier_partition)
 
-    assert processed_list["uuid"] == frontier_partition["uuid"]
-    assert isinstance(processed_list["urls_count"], int)
+    assert processed_list.uuid == frontier_partition.uuid
+    assert isinstance(processed_list.urls_count, int)
 
-    for i in range(len(processed_list["urls"])):
-        assert isinstance(processed_list["urls"][i]["url"], str)
+    assert processed_list.urls_count == frontier_partition.urls_count * (
+        s.max_links_per_page + 1
+    )
+
+    for i in range(len(processed_list.urls)):
+        assert isinstance(processed_list.urls[i].url, HttpUrl)
         assert (
-            isinstance(processed_list["urls"][i]["url_discovery_date"], str)
-            or processed_list["urls"][i]["url_discovery_date"] is None
+            isinstance(processed_list.urls[i].url_discovery_date, datetime)
+            or processed_list.urls[i].url_discovery_date is None
         )
         assert (
-            isinstance(processed_list["urls"][i]["url_last_visited"], str)
-            or processed_list["urls"][i]["url_last_visited"] is None
+            isinstance(processed_list.urls[i].url_last_visited, datetime)
+            or processed_list.urls[i].url_last_visited is None
         )
-        assert isinstance(
-            processed_list["urls"][i]["url_discovery_date"], str
-        ) or isinstance(processed_list["urls"][i]["url_last_visited"], str)
+        assert isinstance(processed_list.urls[i].url_discovery_date, datetime) or isinstance(
+            processed_list.urls[i].url_last_visited, datetime
+        )
 
 
 def test_simulate_short_term_fetch():
     short_term_frontier = pyd.UrlFrontier(
-        fqdn="www.abc.de",
+        fqdn="www.example.de",
         tld="de",
         fqdn_last_ipv4="123.456.78.91",
         fqdn_last_ipv6="2001:DB8::1234",
         fqdn_pagerank=0.00001,
-        fqdn_crawl_delay=5,
+        fqdn_crawl_delay=None,
         fqdn_url_count=2,
         url_list=[
             pyd.Url(
-                url="http://www.abc.de/html/index",
-                fqdn="www.abc.de",
+                url="http://www.example.de/html/index",
+                fqdn="www.example.de",
                 url_discovery_date=None,
                 url_last_visited="2020-01-01T06:00:00",
                 url_blacklisted=False,
                 url_bot_excluded=False,
             ),
             pyd.Url(
-                url="http://www.abc.de/html/contact",
-                fqdn="www.abc.de",
+                url="http://www.example.de/html/contact",
+                fqdn="www.example.de",
                 url_discovery_date=None,
                 url_last_visited="2020-01-01T07:00:00",
                 url_blacklisted=False,
@@ -212,6 +236,9 @@ def test_simulate_short_term_fetch():
     short_term_fetch_result = fetch.simulate_short_term_fetch(short_term_frontier)
 
     assert isinstance(short_term_fetch_result, List)
+    assert len(short_term_fetch_result) == len(short_term_frontier.url_list) * (
+        s.max_links_per_page + 1
+    )
     for i in range(len(short_term_fetch_result)):
         assert isinstance(short_term_fetch_result[i], pyd.Url)
         assert isinstance(short_term_fetch_result[i].url, HttpUrl)

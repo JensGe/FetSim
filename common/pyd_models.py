@@ -125,6 +125,7 @@ class RandomUrls(BasisModel):
 
 
 class SimulatedParsedList(BasisModel):
-    uuid: UUID
+    uuid: str
     urls_count: int
+    fqdns: List[UrlFrontier]
     urls: List[Url]
