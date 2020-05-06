@@ -70,6 +70,7 @@ def generate_existing_url(fqdn: str = None):
 
 
 def simulate_parse_url(url: pyd.Url) -> List[pyd.Url]:
+    url.url_last_visited = datetime.now()
     parsed_list = [url]
 
     simulated_link_amount = random.randint(s.min_links_per_page, s.max_links_per_page)
@@ -135,6 +136,39 @@ def simulate_fqdn_parse(url_frontier_list: pyd.UrlFrontier) -> pyd.UrlFrontier:
     return url_frontier_list
 
 
+def get_tld(fqdn):
+    if fqdn.split(".")[-2] == "co":
+        tld = ".".join(fqdn.split(".")[-2:])
+    else:
+        tld = fqdn.split(".")[-1]
+    return tld
+
+
+def fqdns_from_url_list(url_list: List[pyd.Url]) -> List[pyd.UrlFrontier]:
+    fqdn_list = []
+    for url in url_list:
+        fqdn_list.append(
+            pyd.UrlFrontier(
+                fqdn=url.fqdn,
+                tld=get_tld(url.fqdn)
+            )
+        )
+    return fqdn_list
+
+
+def unique_list(a, b) -> List:
+    new = []
+    for url in a:
+        if url not in new:
+            new.append(url)
+
+    for url in b:
+        if url not in new:
+            new.append(url)
+
+    return new
+
+
 def simulate_full_fetch(long_term_frontier: pyd.FrontierResponse):
 
     logging.debug("Long Term Frontier: {}".format(long_term_frontier))
@@ -145,30 +179,32 @@ def simulate_full_fetch(long_term_frontier: pyd.FrontierResponse):
     )
     fqdn_pool.close()
 
-    logging.debug("URL Frontier List gen: {}".format(url_frontier_list))
-
-    processed_frontier = pyd.FrontierResponse(
-        uuid=long_term_frontier.uuid,
-        response_url=long_term_frontier.response_url,
-        latest_return=long_term_frontier.latest_return,
-        url_frontiers_count=long_term_frontier.url_frontiers_count,
-        urls_count=long_term_frontier.urls_count,
-        url_frontiers=url_frontier_list,
-    )
-
-    logging.debug("URL Frontier List ins: {}".format(processed_frontier.url_frontiers))
+    logging.debug("URL Frontier List ins: {}".format(url_frontier_list))
 
     url_pool = Pool(processes=s.parallel_processes)
-    url_data = url_pool.map(simulate_short_term_fetch, processed_frontier.url_frontiers)
+    url_data = url_pool.map(simulate_short_term_fetch, url_frontier_list)
     url_pool.close()
 
     flat_url_data = [url for url_list in url_data for url in url_list]
 
     logging.debug("Url Data: {}".format(flat_url_data))
 
+    all_new_fqdns = fqdns_from_url_list(flat_url_data)
+    extended_url_frontier_list = unique_list(url_frontier_list, all_new_fqdns)
+
+    processed_frontier = pyd.FrontierResponse(
+        uuid=long_term_frontier.uuid,
+        response_url=long_term_frontier.response_url,
+        latest_return=long_term_frontier.latest_return,
+        url_frontiers_count=long_term_frontier.url_frontiers_count,
+        urls_count=long_term_frontier.url_count,
+        url_frontiers=extended_url_frontier_list,
+    )
+
     return pyd.SimulatedParsedList(
         uuid=long_term_frontier.uuid,
-        urls_count=len(flat_url_data),
+        fqdn_count=len(processed_frontier.url_frontiers),
         fqdns=processed_frontier.url_frontiers,
+        url_count=len(flat_url_data),
         urls=flat_url_data,
     )

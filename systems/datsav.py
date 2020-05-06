@@ -43,8 +43,9 @@ def fqdn_dict(fqdn: pyd.UrlFrontier) -> dict:
 def convert_parsed_list_to_dict(submit_list: pyd.SimulatedParsedList):
     return {
         "uuid": str(submit_list.uuid),
-        "urls_count": submit_list.urls_count,
+        "fqdn_count": submit_list.fqdn_count,
         "fqdns": [fqdn_dict(fqdn) for fqdn in submit_list.fqdns],
+        "url_count": submit_list.url_count,
         "urls": [url_dict(url) for url in submit_list.urls],
     }
 

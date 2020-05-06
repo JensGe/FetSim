@@ -131,6 +131,7 @@ def test_simulate_parse_url():
 
 
 def test_simulate_fetch():
+
     frontier_partition = pyd.FrontierResponse(
         uuid="12345678-90ab-cdef-0000-000000000000",
         response_url="http://www.example.com/submit",
@@ -175,17 +176,16 @@ def test_simulate_fetch():
                         url_bot_excluded=False,
                     ),
                 ],
-            )
-
+            ),
         ],
     )
 
     processed_list = fetch.simulate_full_fetch(frontier_partition)
 
     assert processed_list.uuid == frontier_partition.uuid
-    assert isinstance(processed_list.urls_count, int)
+    assert isinstance(processed_list.url_count, int)
 
-    assert processed_list.urls_count == frontier_partition.urls_count * (
+    assert processed_list.url_count == frontier_partition.url_count * (
         s.max_links_per_page + 1
     )
 
@@ -199,9 +199,9 @@ def test_simulate_fetch():
             isinstance(processed_list.urls[i].url_last_visited, datetime)
             or processed_list.urls[i].url_last_visited is None
         )
-        assert isinstance(processed_list.urls[i].url_discovery_date, datetime) or isinstance(
-            processed_list.urls[i].url_last_visited, datetime
-        )
+        assert isinstance(
+            processed_list.urls[i].url_discovery_date, datetime
+        ) or isinstance(processed_list.urls[i].url_last_visited, datetime)
 
 
 def test_simulate_short_term_fetch():
@@ -270,3 +270,28 @@ def test_generate_existing_existing_url():
 
     assert isinstance(existing_url, pyd.Url)
     assert existing_url.fqdn == fqdn
+
+
+def test_union_with_numbers():
+    lista = [1, 2, 3, 4, 3]
+    listb = [3, 4, 5, 6]
+    asserted_list = [1, 2, 3, 4, 5, 6]
+    assert fetch.unique_list(lista, listb) == asserted_list
+
+
+def test_union_with_Urls():
+    lista = [
+        pyd.UrlFrontier(url="http://www.example.com", fqdn="www.example.com"),
+        pyd.UrlFrontier(url="http://www.example.de", fqdn="www.example.de"),
+        pyd.UrlFrontier(url="http://www.example.com", fqdn="www.example.com"),
+    ]
+    listb = [
+        pyd.UrlFrontier(url="http://www.example.com", fqdn="www.example.com"),
+        pyd.UrlFrontier(url="http://www.example.fr", fqdn="www.example.fr"),
+    ]
+    asserted_list = [
+        pyd.UrlFrontier(url="http://www.example.com", fqdn="www.example.com"),
+        pyd.UrlFrontier(url="http://www.example.de", fqdn="www.example.de"),
+        pyd.UrlFrontier(url="http://www.example.fr", fqdn="www.example.fr"),
+    ]
+    assert fetch.unique_list(lista, listb) == asserted_list

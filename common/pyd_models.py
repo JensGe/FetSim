@@ -85,7 +85,7 @@ class FrontierResponse(BasisModel):
     response_url: HttpUrl = None
     latest_return: datetime = None
     url_frontiers_count: int = 10
-    urls_count: int = 0
+    url_count: int = 0
     url_frontiers: List[UrlFrontier] = []
 
 
@@ -126,6 +126,7 @@ class RandomUrls(BasisModel):
 
 class SimulatedParsedList(BasisModel):
     uuid: str
-    urls_count: int
+    fqdn_count: int
     fqdns: List[UrlFrontier]
+    url_count: int
     urls: List[Url]
