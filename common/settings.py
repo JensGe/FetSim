@@ -17,7 +17,7 @@ uuid_file = "uuid.dat"
 
 
 # Fetching Simulator
-max_links_per_page = 20
+max_links_per_page = 3
 min_links_per_page = 1
 
 internal_vs_external_threshold = 0.85      # Check Literature
@@ -25,9 +25,9 @@ new_vs_existing_threshold = 0.35
 
 
 parallel_processes = 10
-crawling_speed = 10.0
+crawling_speed = 100.0
 
 
-iterations = 5
-amount = 10
-length = 0
+iterations = 10
+amount = 2
+length = 5
