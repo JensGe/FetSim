@@ -272,26 +272,42 @@ def test_generate_existing_existing_url():
     assert existing_url.fqdn == fqdn
 
 
-def test_union_with_numbers():
-    lista = [1, 2, 3, 4, 3]
-    listb = [3, 4, 5, 6]
-    asserted_list = [1, 2, 3, 4, 5, 6]
-    assert fetch.unique_list(lista, listb) == asserted_list
-
-
 def test_union_with_Urls():
     lista = [
-        pyd.UrlFrontier(url="http://www.example.com", fqdn="www.example.com"),
-        pyd.UrlFrontier(url="http://www.example.de", fqdn="www.example.de"),
-        pyd.UrlFrontier(url="http://www.example.com", fqdn="www.example.com"),
+        pyd.UrlFrontier(fqdn="www.example.com", tld="com"),
+        pyd.UrlFrontier(fqdn="www.example.de", tld="de"),
+        pyd.UrlFrontier(fqdn="www.example.com", tld="com")
     ]
     listb = [
-        pyd.UrlFrontier(url="http://www.example.com", fqdn="www.example.com"),
-        pyd.UrlFrontier(url="http://www.example.fr", fqdn="www.example.fr"),
+        pyd.UrlFrontier(fqdn="www.example.com", tld="com"),
+        pyd.UrlFrontier(fqdn="www.example.fr", tld="fr"),
     ]
     asserted_list = [
-        pyd.UrlFrontier(url="http://www.example.com", fqdn="www.example.com"),
-        pyd.UrlFrontier(url="http://www.example.de", fqdn="www.example.de"),
-        pyd.UrlFrontier(url="http://www.example.fr", fqdn="www.example.fr"),
+        pyd.UrlFrontier(fqdn="www.example.com", tld="com"),
+        pyd.UrlFrontier(fqdn="www.example.de", tld="de"),
+        pyd.UrlFrontier(fqdn="www.example.fr", tld="fr"),
     ]
-    assert fetch.unique_list(lista, listb) == asserted_list
+    assert fetch.unique_fqdn_list(lista, listb) == asserted_list
+
+
+def test_union_with_url_updates():
+    list_a = [
+        pyd.UrlFrontier(
+            fqdn="www.example.com",
+            tld="com",
+            fqdn_last_ipv4="123.456.78.90",
+        ),
+    ]
+
+    list_b = [
+        pyd.UrlFrontier(fqdn="www.example.com", tld="com"),
+    ]
+
+    asserted_list = [
+        pyd.UrlFrontier(
+            fqdn="www.example.com",
+            tld="com",
+            fqdn_last_ipv4="123.456.78.90",
+        ),
+    ]
+    assert fetch.unique_fqdn_list(list_a, list_b) == asserted_list

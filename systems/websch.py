@@ -25,6 +25,7 @@ def get_frontier_partition(uuid):
     frontier_request_dict = {
         "crawler_uuid": uuid,
         "amount": s.amount,
+        "length": s.length
     }
 
     response = requests.post(

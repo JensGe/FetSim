@@ -156,14 +156,14 @@ def fqdns_from_url_list(url_list: List[pyd.Url]) -> List[pyd.UrlFrontier]:
     return fqdn_list
 
 
-def unique_list(a, b) -> List:
+def unique_fqdn_list(a, b) -> List:
     new = []
     for url in a:
-        if url not in new:
+        if url.fqdn not in [url.fqdn for url in new]:
             new.append(url)
 
     for url in b:
-        if url not in new:
+        if url.fqdn not in [url.fqdn for url in new]:
             new.append(url)
 
     return new
@@ -190,7 +190,7 @@ def simulate_full_fetch(long_term_frontier: pyd.FrontierResponse):
     logging.debug("Url Data: {}".format(flat_url_data))
 
     all_new_fqdns = fqdns_from_url_list(flat_url_data)
-    extended_url_frontier_list = unique_list(url_frontier_list, all_new_fqdns)
+    extended_url_frontier_list = unique_fqdn_list(url_frontier_list, all_new_fqdns)
 
     processed_frontier = pyd.FrontierResponse(
         uuid=long_term_frontier.uuid,
