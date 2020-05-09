@@ -1,21 +1,24 @@
 from systems import fetch, websch, datsav
-from common import settings
+from common import settings as s
 import s3_upload
 
 import logging
 import time
+import os
 
 
 def main():
 
     i = 0
 
-    while i < settings.iterations:
+    while i < s.iterations:
         uuid = websch.init_crawler()
 
+        if not os.path.exists(s.log_dir):
+            os.makedirs(s.log_dir)
         start_time = time.strftime("%Y-%m-%d", time.gmtime())
         logging.basicConfig(
-            filename="logs/{} {}.log".format(start_time, uuid),
+            filename="{}/{} {}.log".format(s.log_dir, start_time, uuid),
             filemode="a",
             level=logging.INFO,
             format="%(asctime)s.%(msecs)d %(name)s %(levelname)s %(message)s",
