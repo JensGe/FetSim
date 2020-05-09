@@ -4,8 +4,6 @@ from common import settings as s, helper, local
 from common import pyd_models as pyd
 import logging
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
-
 
 def websch_uuid_exists():
     uuid = local.get_pickle_uuid()

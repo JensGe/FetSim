@@ -2,8 +2,6 @@ import requests
 import logging
 from common import pyd_models as pyd
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
-
 
 def url_dict(url: pyd.Url) -> dict:
     discovery_date = (
@@ -56,6 +54,6 @@ def submit_processed_list(submission_endpoint, submit_list: pyd.SimulatedParsedL
 
     submit_response = requests.post(url=submission_endpoint, json=submit_dict)
 
-    logging.info("Submission Endpoint: {}".format(submission_endpoint))
-    logging.info("Submission: {}".format(submit_dict))
+    logging.debug("Submission Endpoint: {}".format(submission_endpoint))
+    logging.debug("Submission: {}".format(submit_dict))
     return submit_response.status_code

@@ -25,9 +25,10 @@ new_vs_existing_threshold = 0.35
 
 
 parallel_processes = 10
-crawling_speed = 10.0
+crawling_speed = 1000.0
+default_crawl_delay = 10
 
 
-iterations = 10
-amount = 10
+iterations = 1
+amount = 1
 length = 0

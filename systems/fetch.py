@@ -10,8 +10,6 @@ from typing import List
 import random
 import logging
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
-
 
 def new_internal_cond(internal_vs_external_randomness, known_vs_unknown_randomness):
     return (
@@ -94,11 +92,12 @@ def simulate_parse_url(url: pyd.Url) -> List[pyd.Url]:
 
 
 def simulate_short_term_fetch(url_frontier_list: pyd.UrlFrontier) -> List[pyd.Url]:
-    simulated_crawl_delay_time = (
-        (10 / s.crawling_speed)
+    crawl_delay = (
+        s.default_crawl_delay
         if url_frontier_list.fqdn_crawl_delay is None
-        else url_frontier_list.fqdn_crawl_delay / s.crawling_speed
+        else url_frontier_list.fqdn_crawl_delay
     )
+    simulated_crawl_delay_time = crawl_delay / s.crawling_speed
 
     cumulative_parsed_list = []
     for url in url_frontier_list.url_list:
@@ -147,12 +146,7 @@ def get_tld(fqdn):
 def fqdns_from_url_list(url_list: List[pyd.Url]) -> List[pyd.UrlFrontier]:
     fqdn_list = []
     for url in url_list:
-        fqdn_list.append(
-            pyd.UrlFrontier(
-                fqdn=url.fqdn,
-                tld=get_tld(url.fqdn)
-            )
-        )
+        fqdn_list.append(pyd.UrlFrontier(fqdn=url.fqdn, tld=get_tld(url.fqdn)))
     return fqdn_list
 
 
