@@ -4,10 +4,6 @@
 
 **/home/ubuntu/init_docker.sh**
 ```shell script
-export AWS_ACCESS_KEY_ID="..."
-export AWS_ACCESS_KEY="..."
-
-sudo sleep 2s
 sudo docker pull dockerjens23/fetsim
 sudo sleep 2s
 sudo docker run -d -p 80:80 dockerjens23/fetsim
