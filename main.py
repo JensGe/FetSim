@@ -20,7 +20,7 @@ def main():
         logging.basicConfig(
             filename="{}/{} {}.log".format(s.log_dir, start_time, uuid),
             filemode="a",
-            level=logging.INFO,
+            level=s.logging_level,
             format="%(asctime)s.%(msecs)d %(name)s %(levelname)s %(message)s",
             datefmt="%Y-%m-%d %H:%M:%S",
         )

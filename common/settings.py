@@ -1,5 +1,4 @@
-import random
-
+import logging
 
 # Endpoints
 websch_crawler_endpoint = (
@@ -16,6 +15,8 @@ websch_urls_endpoint = (
 uuid_file = "uuid.dat"
 log_dir = "logs"
 
+# Logging level
+logging_level = logging.DEBUG
 
 # Fetching Simulator
 min_links_per_page = 2                      # Check Literature
