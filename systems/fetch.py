@@ -87,17 +87,27 @@ def simulate_parse_url(url: pyd.Url) -> List[pyd.Url]:
         internal_external_rand = random.random()
         known_unknown_rand = random.random()
 
+        logging.debug("Next URL from Frontier: {}".format(url.url))
+
         if new_internal_cond(internal_external_rand, known_unknown_rand):
-            parsed_list.append(generate_new_internal_url(url))
+            new_url = generate_new_internal_url(url)
+            logging.debug("New Internal URL: {}".format(new_url.url))
+            parsed_list.append(new_url)
 
         if existing_internal_cond(internal_external_rand, known_unknown_rand):
-            parsed_list.append(generate_existing_url(fqdn=url.fqdn))
+            new_url = generate_existing_url(fqdn=url.fqdn)
+            logging.debug("Existing Internal URL: {}".format(new_url.url))
+            parsed_list.append(new_url)
 
         if new_external_cond(internal_external_rand, known_unknown_rand):
-            parsed_list.append(gen.get_random_url())
+            new_url = gen.get_random_url()
+            logging.debug("New External URL: {}".format(new_url.url))
+            parsed_list.append(new_url)
 
         if existing_external_cond(internal_external_rand, known_unknown_rand):
-            parsed_list.append(generate_existing_url())
+            new_url = generate_existing_url()
+            logging.debug("Existing External URL: {}".format(new_url.url))
+            parsed_list.append(new_url)
 
     return parsed_list
 
