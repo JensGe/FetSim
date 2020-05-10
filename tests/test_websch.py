@@ -12,3 +12,10 @@ def test_get_frontier_partition():
     assert isinstance(response, pyd.FrontierResponse)
     assert len(response.url_frontiers) == s.amount
 
+
+def test_request_settings():
+    response_dict = requests.get(s.websch_settings_endpoint).json()
+    print(response_dict)
+    assert isinstance(response_dict, dict)
+
+

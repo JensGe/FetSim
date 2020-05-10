@@ -2,17 +2,22 @@ import logging
 
 # Endpoints
 websch_crawler_endpoint = (
-    "http://ec2-18-185-96-23.eu-central-1.compute.amazonaws.com/crawlers"
+    "http://ec2-18-185-96-23.eu-central-1.compute.amazonaws.com/crawlers/"
 )
 websch_frontier_endpoint = (
-    "http://ec2-18-185-96-23.eu-central-1.compute.amazonaws.com/frontiers"
+    "http://ec2-18-185-96-23.eu-central-1.compute.amazonaws.com/frontiers/"
 )
 websch_urls_endpoint = (
-    "http://ec2-18-185-96-23.eu-central-1.compute.amazonaws.com/urls"
+    "http://ec2-18-185-96-23.eu-central-1.compute.amazonaws.com/urls/"
 )
+websch_settings_endpoint = (
+    "http://ec2-18-185-96-23.eu-central-1.compute.amazonaws.com/settings/"
+)
+
 
 # Files & Folders
 uuid_file = "uuid.dat"
+settings_file = "settings.dat"
 log_dir = "logs"
 
 # Logging level
@@ -27,7 +32,7 @@ new_vs_existing_threshold = 0.35
 
 
 parallel_processes = 10
-crawling_speed = 1000.0
+crawling_speed = 10.0
 default_crawl_delay = 10
 
 

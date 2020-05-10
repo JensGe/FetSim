@@ -16,3 +16,14 @@ def save_uuid_to_pickle(uuid):
 def get_pickle_uuid():
     with open(s.uuid_file, "rb") as file:
         return pickle.load(file)
+
+
+def save_settings_to_pickle(settings):
+    with open(s.settings_file, "wb") as file:
+        pickle.dump(settings, file)
+
+
+def load_settings(setting):
+    with open(s.settings_file, "rb") as file:
+        return pickle.load(file)[setting]
+

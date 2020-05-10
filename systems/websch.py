@@ -1,7 +1,9 @@
 import requests
 
-from common import settings as s, helper, local
+from common import settings as s
 from common import pyd_models as pyd
+from common import local
+from common import helper
 import logging
 
 
@@ -22,8 +24,8 @@ def websch_uuid_exists():
 def get_frontier_partition(uuid):
     frontier_request_dict = {
         "crawler_uuid": uuid,
-        "amount": s.amount,
-        "length": s.length
+        "amount": local.load_settings("fqdn_amount"),
+        "length": local.load_settings("url_amount")
     }
 
     response = requests.post(
@@ -58,3 +60,9 @@ def init_crawler():
         create_websch_crawler()
 
     return local.get_pickle_uuid()
+
+
+def init_fetcher_settings():
+    local.save_settings_to_pickle(requests.get(s.websch_settings_endpoint).json())
+
+

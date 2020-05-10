@@ -1,5 +1,5 @@
 from common import generate as gen
-from common import settings as s
+from common import local
 from common import pyd_models as pyd
 
 from multiprocessing import Pool
@@ -13,8 +13,10 @@ import logging
 
 def new_internal_cond(internal_vs_external_randomness, known_vs_unknown_randomness):
     return (
-        internal_vs_external_randomness < s.internal_vs_external_threshold
-        and known_vs_unknown_randomness < s.new_vs_existing_threshold
+        internal_vs_external_randomness
+        < local.load_settings("internal_vs_external_threshold")
+        and known_vs_unknown_randomness
+        < local.load_settings("new_vs_existing_threshold")
     )
 
 
@@ -22,15 +24,19 @@ def existing_internal_cond(
     internal_vs_external_randomness, known_vs_unknown_randomness
 ):
     return (
-        internal_vs_external_randomness < s.internal_vs_external_threshold
-        and known_vs_unknown_randomness >= s.new_vs_existing_threshold
+        internal_vs_external_randomness
+        < local.load_settings("internal_vs_external_threshold")
+        and known_vs_unknown_randomness
+        >= local.load_settings("new_vs_existing_threshold")
     )
 
 
 def new_external_cond(internal_vs_external_randomness, known_vs_unknown_randomness):
     return (
-        internal_vs_external_randomness >= s.internal_vs_external_threshold
-        and known_vs_unknown_randomness < s.new_vs_existing_threshold
+        internal_vs_external_randomness
+        >= local.load_settings("internal_vs_external_threshold")
+        and known_vs_unknown_randomness
+        < local.load_settings("new_vs_existing_threshold")
     )
 
 
@@ -38,8 +44,10 @@ def existing_external_cond(
     internal_vs_external_randomness, known_vs_unknown_randomness
 ):
     return (
-        internal_vs_external_randomness >= s.internal_vs_external_threshold
-        and known_vs_unknown_randomness >= s.new_vs_existing_threshold
+        internal_vs_external_randomness
+        >= local.load_settings("internal_vs_external_threshold")
+        and known_vs_unknown_randomness
+        >= local.load_settings("new_vs_existing_threshold")
     )
 
 
@@ -71,7 +79,10 @@ def simulate_parse_url(url: pyd.Url) -> List[pyd.Url]:
     url.url_last_visited = datetime.now()
     parsed_list = [url]
 
-    simulated_link_amount = random.randint(s.min_links_per_page, s.max_links_per_page)
+    simulated_link_amount = random.randint(
+        local.load_settings("min_links_per_page"),
+        local.load_settings("max_links_per_page"),
+    )
     for _ in range(simulated_link_amount):
         internal_external_rand = random.random()
         known_unknown_rand = random.random()
@@ -93,16 +104,16 @@ def simulate_parse_url(url: pyd.Url) -> List[pyd.Url]:
 
 def simulate_short_term_fetch(url_frontier_list: pyd.UrlFrontier) -> List[pyd.Url]:
     crawl_delay = (
-        s.default_crawl_delay
+        local.load_settings("default_crawl_delay")
         if url_frontier_list.fqdn_crawl_delay is None
         else url_frontier_list.fqdn_crawl_delay
     )
-    simulated_crawl_delay_time = crawl_delay / s.crawling_speed
+    simulated_crawl_delay = crawl_delay / local.load_settings("crawling_speed_factor")
 
     cumulative_parsed_list = []
     for url in url_frontier_list.url_list:
         cumulative_parsed_list.extend(simulate_parse_url(url))
-        sleep(simulated_crawl_delay_time)
+        sleep(simulated_crawl_delay)
 
     return cumulative_parsed_list
 
@@ -167,7 +178,7 @@ def simulate_full_fetch(long_term_frontier: pyd.FrontierResponse):
 
     logging.debug("Long Term Frontier: {}".format(long_term_frontier))
 
-    fqdn_pool = Pool(processes=s.parallel_processes)
+    fqdn_pool = Pool(processes=local.load_settings("parallel_process"))
     url_frontier_list = fqdn_pool.map(
         simulate_fqdn_parse, long_term_frontier.url_frontiers
     )
@@ -175,7 +186,7 @@ def simulate_full_fetch(long_term_frontier: pyd.FrontierResponse):
 
     logging.debug("URL Frontier List ins: {}".format(url_frontier_list))
 
-    url_pool = Pool(processes=s.parallel_processes)
+    url_pool = Pool(processes=local.load_settings("parallel_process"))
     url_data = url_pool.map(simulate_short_term_fetch, url_frontier_list)
     url_pool.close()
 

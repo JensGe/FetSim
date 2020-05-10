@@ -1,5 +1,8 @@
+import sys
+
 from systems import fetch, websch, datsav
 from common import settings as s
+from common import local
 import s3_upload
 
 import logging
@@ -8,27 +11,29 @@ import os
 
 
 def main():
-
     i = 0
+    websch.init_fetcher_settings()
 
-    while i < s.iterations:
+    while i < local.load_settings("iterations"):
         uuid = websch.init_crawler()
 
         if not os.path.exists(s.log_dir):
             os.makedirs(s.log_dir)
+
         start_time = time.strftime("%Y-%m-%d", time.gmtime())
         logging.basicConfig(
-            filename="{}/{} {}.log".format(s.log_dir, start_time, uuid),
-            filemode="a",
             level=s.logging_level,
             format="%(asctime)s.%(msecs)d %(name)s %(levelname)s %(message)s",
             datefmt="%Y-%m-%d %H:%M:%S",
+            filename="{}/{} {}.log".format(s.log_dir, start_time, uuid),
+            filemode="a",
         )
 
         frontier_response = websch.get_frontier_partition(uuid)
         logging.info(
             "Frontier Stats: FQDN Amount: {}".format(
-                frontier_response.url_frontiers_count)
+                frontier_response.url_frontiers_count
+            )
         )
         for url_frontier in frontier_response.url_frontiers:
             logging.info(
@@ -59,4 +64,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
