@@ -50,12 +50,12 @@ def get_random_url(fqdn=None) -> pyd.Url:
     )
 
 
-def get_random_existing_url(fqdn: str = None) -> pyd.Url:
+def get_random_existing_url(session: requests.Session, fqdn: str = None) -> pyd.Url:
     if fqdn is None:
-        random_url = requests.get(s.websch_urls_endpoint, json={"amount": 1}).json()
+        random_url = session.get(s.websch_urls_endpoint, json={"amount": 1}).json()
 
     else:
-        random_url = requests.get(
+        random_url = session.get(
             s.websch_urls_endpoint, json={"amount": 1, "fqdn": fqdn}
         ).json()
 

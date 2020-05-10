@@ -9,6 +9,7 @@ from typing import List
 import multiprocessing as mp
 import random
 import logging
+import requests
 
 
 def new_internal_cond(internal_vs_external_randomness, known_vs_unknown_randomness):
@@ -54,8 +55,8 @@ def generate_new_internal_url(url: pyd.Url):
     )
 
 
-def generate_existing_url(fqdn: str = None):
-    url = gen.get_random_existing_url(fqdn=fqdn)
+def generate_existing_url(session: requests.Session, fqdn: str = None):
+    url = gen.get_random_existing_url(session=session, fqdn=fqdn)
 
     return pyd.Url(
         url=url.url,
@@ -67,7 +68,7 @@ def generate_existing_url(fqdn: str = None):
     )
 
 
-def simulate_parse_url(url: pyd.Url) -> List[pyd.Url]:
+def simulate_parse_url(url: pyd.Url, session: requests.Session) -> List[pyd.Url]:
     url.url_last_visited = datetime.now()
     parsed_list = [url]
 
@@ -88,7 +89,7 @@ def simulate_parse_url(url: pyd.Url) -> List[pyd.Url]:
             parsed_list.append(new_url)
 
         if existing_internal_cond(internal_external_rand, known_unknown_rand):
-            new_url = generate_existing_url(fqdn=url.fqdn)
+            new_url = generate_existing_url(session=session, fqdn=url.fqdn)
             logging.debug(
                 "{} Existing Internal URL: {}".format(mp.current_process(), new_url.url)
             )
@@ -102,7 +103,7 @@ def simulate_parse_url(url: pyd.Url) -> List[pyd.Url]:
             parsed_list.append(new_url)
 
         if existing_external_cond(internal_external_rand, known_unknown_rand):
-            new_url = generate_existing_url()
+            new_url = generate_existing_url(session=session)
             logging.debug(
                 "{} Existing External URL: {}".format(mp.current_process(), new_url.url)
             )
@@ -119,9 +120,11 @@ def simulate_short_term_fetch(url_frontier_list: pyd.UrlFrontier) -> List[pyd.Ur
     )
     simulated_crawl_delay = crawl_delay / local.load_settings("crawling_speed_factor")
 
+    session = requests.Session()
     cumulative_parsed_list = []
+
     for url in url_frontier_list.url_list:
-        cumulative_parsed_list.extend(simulate_parse_url(url))
+        cumulative_parsed_list.extend(simulate_parse_url(url, session))
         sleep(simulated_crawl_delay)
 
     return cumulative_parsed_list
