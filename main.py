@@ -23,7 +23,7 @@ def main():
         start_time = time.strftime("%Y-%m-%d", time.gmtime())
         logging.basicConfig(
             level=s.logging_level,
-            format="%(asctime)s.%(msecs)6d %(name)s %(levelname)s %(message)s",
+            format="%(asctime)s.%(msecs)09d %(name)s %(levelname)s %(message)s",
             datefmt="%Y-%m-%d %H:%M:%S",
             filename="{}/{} {}.log".format(s.log_dir, start_time, uuid),
             filemode="a",
