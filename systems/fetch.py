@@ -2,52 +2,44 @@ from common import generate as gen
 from common import local
 from common import pyd_models as pyd
 
-from multiprocessing import Pool
 from time import sleep
 from datetime import datetime
 from typing import List
 
+import multiprocessing as mp
 import random
 import logging
 
 
 def new_internal_cond(internal_vs_external_randomness, known_vs_unknown_randomness):
-    return (
-        internal_vs_external_randomness
-        < local.load_settings("internal_vs_external_threshold")
-        and known_vs_unknown_randomness
-        < local.load_settings("new_vs_existing_threshold")
-    )
+    return internal_vs_external_randomness < local.load_settings(
+        "internal_vs_external_threshold"
+    ) and known_vs_unknown_randomness < local.load_settings("new_vs_existing_threshold")
 
 
 def existing_internal_cond(
     internal_vs_external_randomness, known_vs_unknown_randomness
 ):
-    return (
-        internal_vs_external_randomness
-        < local.load_settings("internal_vs_external_threshold")
-        and known_vs_unknown_randomness
-        >= local.load_settings("new_vs_existing_threshold")
+    return internal_vs_external_randomness < local.load_settings(
+        "internal_vs_external_threshold"
+    ) and known_vs_unknown_randomness >= local.load_settings(
+        "new_vs_existing_threshold"
     )
 
 
 def new_external_cond(internal_vs_external_randomness, known_vs_unknown_randomness):
-    return (
-        internal_vs_external_randomness
-        >= local.load_settings("internal_vs_external_threshold")
-        and known_vs_unknown_randomness
-        < local.load_settings("new_vs_existing_threshold")
-    )
+    return internal_vs_external_randomness >= local.load_settings(
+        "internal_vs_external_threshold"
+    ) and known_vs_unknown_randomness < local.load_settings("new_vs_existing_threshold")
 
 
 def existing_external_cond(
     internal_vs_external_randomness, known_vs_unknown_randomness
 ):
-    return (
-        internal_vs_external_randomness
-        >= local.load_settings("internal_vs_external_threshold")
-        and known_vs_unknown_randomness
-        >= local.load_settings("new_vs_existing_threshold")
+    return internal_vs_external_randomness >= local.load_settings(
+        "internal_vs_external_threshold"
+    ) and known_vs_unknown_randomness >= local.load_settings(
+        "new_vs_existing_threshold"
     )
 
 
@@ -86,27 +78,34 @@ def simulate_parse_url(url: pyd.Url) -> List[pyd.Url]:
     for _ in range(simulated_link_amount):
         internal_external_rand = random.random()
         known_unknown_rand = random.random()
-
-        logging.debug("Next URL from Frontier: {}".format(url.url))
+        logging.debug("{} Next URL: {}".format(mp.current_process(), url.url))
 
         if new_internal_cond(internal_external_rand, known_unknown_rand):
             new_url = generate_new_internal_url(url)
-            logging.debug("New Internal URL: {}".format(new_url.url))
+            logging.debug(
+                "{} New Internal URL: {}".format(mp.current_process(), new_url.url)
+            )
             parsed_list.append(new_url)
 
         if existing_internal_cond(internal_external_rand, known_unknown_rand):
             new_url = generate_existing_url(fqdn=url.fqdn)
-            logging.debug("Existing Internal URL: {}".format(new_url.url))
+            logging.debug(
+                "{} Existing Internal URL: {}".format(mp.current_process(), new_url.url)
+            )
             parsed_list.append(new_url)
 
         if new_external_cond(internal_external_rand, known_unknown_rand):
             new_url = gen.get_random_url()
-            logging.debug("New External URL: {}".format(new_url.url))
+            logging.debug(
+                "{} New External URL: {}".format(mp.current_process(), new_url.url)
+            )
             parsed_list.append(new_url)
 
         if existing_external_cond(internal_external_rand, known_unknown_rand):
             new_url = generate_existing_url()
-            logging.debug("Existing External URL: {}".format(new_url.url))
+            logging.debug(
+                "{} Existing External URL: {}".format(mp.current_process(), new_url.url)
+            )
             parsed_list.append(new_url)
 
     return parsed_list
@@ -129,6 +128,9 @@ def simulate_short_term_fetch(url_frontier_list: pyd.UrlFrontier) -> List[pyd.Ur
 
 
 def simulate_fqdn_parse(url_frontier_list: pyd.UrlFrontier) -> pyd.UrlFrontier:
+    logging.debug(
+        "{} Sim FQDN Parse: {}".format(mp.current_process(), url_frontier_list.fqdn)
+    )
     url_frontier_list.fqdn_last_ipv4 = (
         gen.random_ipv4()
         if url_frontier_list.fqdn_last_ipv4 is None
@@ -188,7 +190,7 @@ def simulate_full_fetch(long_term_frontier: pyd.FrontierResponse):
 
     logging.debug("Long Term Frontier: {}".format(long_term_frontier))
 
-    fqdn_pool = Pool(processes=local.load_settings("parallel_process"))
+    fqdn_pool = mp.Pool(processes=local.load_settings("parallel_process"))
     url_frontier_list = fqdn_pool.map(
         simulate_fqdn_parse, long_term_frontier.url_frontiers
     )
@@ -196,7 +198,7 @@ def simulate_full_fetch(long_term_frontier: pyd.FrontierResponse):
 
     logging.debug("URL Frontier List ins: {}".format(url_frontier_list))
 
-    url_pool = Pool(processes=local.load_settings("parallel_process"))
+    url_pool = mp.Pool(processes=local.load_settings("parallel_process"))
     url_data = url_pool.map(simulate_short_term_fetch, url_frontier_list)
     url_pool.close()
 
