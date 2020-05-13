@@ -21,7 +21,7 @@ settings_file = "settings.dat"
 log_dir = "logs"
 
 # Logging level
-logging_level = logging.DEBUG
+logging_level = logging.INFO
 
 # Fetching Simulator
 min_links_per_page = 2                      # Check Literature
