@@ -70,9 +70,9 @@ def main():
         it["submission_finished"] = time.time()
 
         logging.info(
-            "Iteration Stats: Load ({} ms), Fetch ({} ms), Submit ({} ms).".format(
+            "Iteration Stats: Load ({} ms), Fetch ({} s), Submit ({} ms).".format(
                 round((it["frontier_loaded"] - it["begin"]) * 1000, 3),
-                round((it["fetch_finished"] - it["fetch_begin"]) * 1000, 3),
+                round((it["fetch_finished"] - it["fetch_begin"]), 3),
                 round((it["submission_finished"] - it["submission_begin"]) * 1000, 3),
             )
         )
