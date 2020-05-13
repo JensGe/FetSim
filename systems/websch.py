@@ -52,7 +52,7 @@ def create_websch_crawler():
     local.save_uuid_to_pickle(new_crawler_json["uuid"])
 
 
-def init_crawler():
+def init_fetcher():
     if not local.file_exists(s.uuid_file):
         create_websch_crawler()
 
