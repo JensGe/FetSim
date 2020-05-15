@@ -127,6 +127,11 @@ def simulate_short_term_fetch(url_frontier_list: pyd.UrlFrontier) -> List[pyd.Ur
         cumulative_parsed_list.extend(simulate_parse_url(url, session))
         sleep(simulated_crawl_delay)
 
+    logging.info(
+        "Short Term Frontier processed. FQDN {}, URLs {}".format(
+            url_frontier_list.fqdn, url_frontier_list.fqdn_url_count
+        )
+    )
     return cumulative_parsed_list
 
 

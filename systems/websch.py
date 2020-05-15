@@ -25,7 +25,9 @@ def get_frontier_partition(uuid):
     frontier_request_dict = {
         "crawler_uuid": uuid,
         "amount": local.load_settings("fqdn_amount"),
-        "length": local.load_settings("url_amount")
+        "length": local.load_settings("url_amount"),
+        "long_term_mode": local.load_settings("long_term_mode"),
+        "short_term_mode": local.load_settings("short_term_mode"),
     }
 
     response = requests.post(
@@ -64,5 +66,3 @@ def init_fetcher():
 
 def init_fetcher_settings():
     local.save_settings_to_pickle(requests.get(s.websch_settings_endpoint).json())
-
-
