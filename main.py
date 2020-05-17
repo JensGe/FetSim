@@ -21,18 +21,19 @@ def main():
 
     start_time = time.strftime("%Y-%m-%d", time.gmtime())
     logging.basicConfig(
-        level=s.logging_level,
+        level=logging.DEBUG,
         format="%(asctime)s.%(msecs)d %(name)s %(levelname)s %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
         # stream=sys.stderr
         filename="{}/{} {}.log".format(s.log_dir, start_time, uuid),
         filemode="a",
     )
+    logging.getLogger().addHandler(logging.StreamHandler())
 
     while i < local.load_settings("iterations"):
-        it = {"begin": time.time()}
+        times = {"begin": time.time()}
         frontier_response = websch.get_frontier_partition(uuid)
-        it["frontier_loaded"] = time.time()
+        times["frontier_loaded"] = time.time()
 
         logging.info(
             "Frontier Stats: {} FQDNs, {} URLs".format(
@@ -52,9 +53,9 @@ def main():
                 )
             )
 
-        it["fetch_begin"] = time.time()
+        times["fetch_begin"] = time.time()
         simulated_urls = fetch.simulate_full_fetch(frontier_response)
-        it["fetch_finished"] = time.time()
+        times["fetch_finished"] = time.time()
 
         logging.info(
             "Response Stats: {} FQDNs, {} URLs".format(
@@ -62,18 +63,18 @@ def main():
             )
         )
 
-        it["submission_begin"] = time.time()
+        times["submission_begin"] = time.time()
         datsav.submit_processed_list(
             submission_endpoint=frontier_response.response_url,
             submit_list=simulated_urls,
         )
-        it["submission_finished"] = time.time()
+        times["submission_finished"] = time.time()
 
         logging.info(
             "Iteration Stats: Load ({} ms), Fetch ({} s), Submit ({} ms).".format(
-                round((it["frontier_loaded"] - it["begin"]) * 1000, 3),
-                round((it["fetch_finished"] - it["fetch_begin"]), 3),
-                round((it["submission_finished"] - it["submission_begin"]) * 1000, 3),
+                round((times["frontier_loaded"] - times["begin"]) * 1000, 3),
+                round((times["fetch_finished"] - times["fetch_begin"]), 3),
+                round((times["submission_finished"] - times["submission_begin"]) * 1000, 3),
             )
         )
 
