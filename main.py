@@ -54,8 +54,10 @@ def main():
             )
 
         times["fetch_begin"] = time.time()
+        time.process_time()
         simulated_urls = fetch.simulate_full_fetch(frontier_response)
         times["fetch_finished"] = time.time()
+        cpu_time = time.process_time()
 
         logging.info(
             "Response Stats: {} FQDNs, {} URLs".format(
@@ -71,10 +73,14 @@ def main():
         times["submission_finished"] = time.time()
 
         logging.info(
-            "Iteration Stats: Load ({} ms), Fetch ({} s), Submit ({} ms).".format(
+            "Iteration Stats: "
+            "Load ({} ms), Fetch ({} s), Fetch CPU ({} s), Submit ({} ms).".format(
                 round((times["frontier_loaded"] - times["begin"]) * 1000, 3),
                 round((times["fetch_finished"] - times["fetch_begin"]), 3),
-                round((times["submission_finished"] - times["submission_begin"]) * 1000, 3),
+                round(cpu_time, 3),
+                round(
+                    (times["submission_finished"] - times["submission_begin"]) * 1000, 3
+                ),
             )
         )
 
