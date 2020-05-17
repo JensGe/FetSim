@@ -76,10 +76,12 @@ def simulate_parse_url(url: pyd.Url, session: requests.Session) -> List[pyd.Url]
         local.load_settings("min_links_per_page"),
         local.load_settings("max_links_per_page"),
     )
+
+    logging.debug("{} Next URL: {}".format(mp.current_process(), url.url))
+
     for _ in range(simulated_link_amount):
         internal_external_rand = random.random()
         known_unknown_rand = random.random()
-        logging.debug("{} Next URL: {}".format(mp.current_process(), url.url))
 
         if new_internal_cond(internal_external_rand, known_unknown_rand):
             new_url = generate_new_internal_url(url)
