@@ -28,6 +28,7 @@ def main():
         filemode="a",
     )
     logging.getLogger().addHandler(logging.StreamHandler())
+    logging.getLogger().setLevel(local.load_settings("logging_mode"))
 
     while i < local.load_settings("iterations"):
         times = {"begin": time.time()}
