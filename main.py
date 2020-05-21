@@ -8,6 +8,7 @@ import s3_upload
 import logging
 import time
 import os
+from ec2_metadata import ec2_metadata
 
 
 def main():
@@ -15,6 +16,7 @@ def main():
     websch.init_fetcher_settings()
 
     uuid = websch.init_fetcher()
+    ec2_instance_id = ec2_metadata.instance_id
 
     if not os.path.exists(s.log_dir):
         os.makedirs(s.log_dir)
@@ -23,7 +25,7 @@ def main():
         level=local.load_settings("logging_mode"),
         format="%(asctime)s.%(msecs)d %(name)s %(levelname)s %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
-        filename="{}/{}.log".format(s.log_dir, uuid),
+        filename="{}/{}.log".format(s.log_dir, ec2_instance_id),
         filemode="a",
     )
     logging.getLogger().addHandler(logging.StreamHandler())

@@ -4,8 +4,8 @@ import logging
 import common.credentials as cred
 from boto3.s3.transfer import S3Transfer
 
-aws_access_key_id = cred.aws_access_key_id                  #
-aws_secret_access_key = cred.aws_access_key                 #
+aws_access_key_id = cred.aws_access_key_id  #
+aws_secret_access_key = cred.aws_access_key  #
 
 bucket_name = "fetsim-logs"
 bucket_folder = "fetsim-logs"
@@ -27,5 +27,7 @@ def upload():
                 bucket_dest_file = bucket_folder + "/" + file
                 transfer = S3Transfer(client)
                 transfer.upload_file(
-                    filename=fetsim_origin_file, bucket=bucket_name, key=bucket_dest_file
+                    filename=fetsim_origin_file,
+                    bucket=bucket_name,
+                    key=bucket_dest_file,
                 )
