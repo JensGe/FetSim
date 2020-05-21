@@ -66,3 +66,8 @@ def init_fetcher():
 
 def init_fetcher_settings():
     local.save_settings_to_pickle(requests.get(s.websch_settings_endpoint).json())
+
+
+def get_instance_id():
+    return requests.get('http://169.254.169.254/latest/meta-data/instance-id')
+

@@ -16,7 +16,7 @@ def main():
     websch.init_fetcher_settings()
 
     uuid = websch.init_fetcher()
-    ec2_instance_id = ec2_metadata.instance_id
+    ec2_instance_id = websch.get_instance_id()
 
     if not os.path.exists(s.log_dir):
         os.makedirs(s.log_dir)
