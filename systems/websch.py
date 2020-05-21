@@ -69,5 +69,8 @@ def init_fetcher_settings():
 
 
 def get_instance_id():
-    return requests.get('http://169.254.169.254/latest/meta-data/instance-id')
+    rv = requests.get('http://169.254.169.254/latest/meta-data/instance-id')
+    print(rv.text)
+    print(rv.json())
+    return rv.text
 
