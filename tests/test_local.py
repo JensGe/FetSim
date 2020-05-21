@@ -9,3 +9,9 @@ def test_save_uuid_to_pickle():
 
     assert local.file_exists(s.uuid_file)
     assert local.get_pickle_uuid() == uuid
+
+
+def test_get_all_settings():
+    settings = {"x": 123, "y": "234"}
+    local.save_settings_to_pickle(settings)
+    assert settings == local.load_all_settings()

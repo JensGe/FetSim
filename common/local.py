@@ -23,7 +23,11 @@ def save_settings_to_pickle(settings):
         pickle.dump(settings, file)
 
 
-def load_settings(setting):
+def load_setting(setting):
     with open(s.settings_file, "rb") as file:
         return pickle.load(file)[setting]
 
+
+def load_all_settings():
+    with open(s.settings_file, "rb") as file:
+        return pickle.load(file)

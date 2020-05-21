@@ -13,33 +13,33 @@ import requests
 
 
 def new_internal_cond(internal_vs_external_randomness, known_vs_unknown_randomness):
-    return internal_vs_external_randomness < local.load_settings(
+    return internal_vs_external_randomness < local.load_setting(
         "internal_vs_external_threshold"
-    ) and known_vs_unknown_randomness < local.load_settings("new_vs_existing_threshold")
+    ) and known_vs_unknown_randomness < local.load_setting("new_vs_existing_threshold")
 
 
 def existing_internal_cond(
     internal_vs_external_randomness, known_vs_unknown_randomness
 ):
-    return internal_vs_external_randomness < local.load_settings(
+    return internal_vs_external_randomness < local.load_setting(
         "internal_vs_external_threshold"
-    ) and known_vs_unknown_randomness >= local.load_settings(
+    ) and known_vs_unknown_randomness >= local.load_setting(
         "new_vs_existing_threshold"
     )
 
 
 def new_external_cond(internal_vs_external_randomness, known_vs_unknown_randomness):
-    return internal_vs_external_randomness >= local.load_settings(
+    return internal_vs_external_randomness >= local.load_setting(
         "internal_vs_external_threshold"
-    ) and known_vs_unknown_randomness < local.load_settings("new_vs_existing_threshold")
+    ) and known_vs_unknown_randomness < local.load_setting("new_vs_existing_threshold")
 
 
 def existing_external_cond(
     internal_vs_external_randomness, known_vs_unknown_randomness
 ):
-    return internal_vs_external_randomness >= local.load_settings(
+    return internal_vs_external_randomness >= local.load_setting(
         "internal_vs_external_threshold"
-    ) and known_vs_unknown_randomness >= local.load_settings(
+    ) and known_vs_unknown_randomness >= local.load_setting(
         "new_vs_existing_threshold"
     )
 
@@ -73,8 +73,8 @@ def simulate_parse_url(url: pyd.Url, session: requests.Session) -> List[pyd.Url]
     parsed_list = [url]
 
     simulated_link_amount = random.randint(
-        local.load_settings("min_links_per_page"),
-        local.load_settings("max_links_per_page"),
+        local.load_setting("min_links_per_page"),
+        local.load_setting("max_links_per_page"),
     )
 
     logging.debug("{} Next URL: {}".format(mp.current_process(), url.url))
@@ -116,11 +116,11 @@ def simulate_parse_url(url: pyd.Url, session: requests.Session) -> List[pyd.Url]
 
 def simulate_short_term_fetch(url_frontier_list: pyd.UrlFrontier) -> List[pyd.Url]:
     crawl_delay = (
-        local.load_settings("default_crawl_delay")
+        local.load_setting("default_crawl_delay")
         if url_frontier_list.fqdn_crawl_delay is None
         else url_frontier_list.fqdn_crawl_delay
     )
-    simulated_crawl_delay = crawl_delay / local.load_settings("crawling_speed_factor")
+    simulated_crawl_delay = crawl_delay / local.load_setting("crawling_speed_factor")
 
     session = requests.Session()
     cumulative_parsed_list = []
@@ -200,7 +200,7 @@ def simulate_full_fetch(long_term_frontier: pyd.FrontierResponse):
 
     logging.debug("Long Term Frontier: {}".format(long_term_frontier))
 
-    fqdn_pool = mp.Pool(processes=local.load_settings("parallel_process"))
+    fqdn_pool = mp.Pool(processes=local.load_setting("parallel_process"))
     url_frontier_list = fqdn_pool.map(
         simulate_fqdn_parse, long_term_frontier.url_frontiers
     )
@@ -208,7 +208,7 @@ def simulate_full_fetch(long_term_frontier: pyd.FrontierResponse):
 
     logging.debug("URL Frontier List ins: {}".format(url_frontier_list))
 
-    url_pool = mp.Pool(processes=local.load_settings("parallel_process"))
+    url_pool = mp.Pool(processes=local.load_setting("parallel_process"))
     url_data = url_pool.map(simulate_short_term_fetch, url_frontier_list)
     url_pool.close()
 

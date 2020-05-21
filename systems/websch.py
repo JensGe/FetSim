@@ -24,10 +24,10 @@ def websch_uuid_exists():
 def get_frontier_partition(uuid):
     frontier_request_dict = {
         "crawler_uuid": uuid,
-        "amount": local.load_settings("fqdn_amount"),
-        "length": local.load_settings("url_amount"),
-        "long_term_mode": local.load_settings("long_term_mode"),
-        "short_term_mode": local.load_settings("short_term_mode"),
+        "amount": local.load_setting("fqdn_amount"),
+        "length": local.load_setting("url_amount"),
+        "long_term_mode": local.load_setting("long_term_mode"),
+        "short_term_mode": local.load_setting("short_term_mode"),
     }
 
     response = requests.post(

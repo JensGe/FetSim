@@ -23,3 +23,5 @@ def test_get_instance_id():
     i_id = websch.get_instance_id()
     print(i_id)
     assert isinstance(i_id, str)
+
+

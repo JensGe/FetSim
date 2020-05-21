@@ -22,16 +22,18 @@ def main():
         os.makedirs(s.log_dir)
 
     logging.basicConfig(
-        level=local.load_settings("logging_mode"),
+        level=local.load_setting("logging_mode"),
         format="%(asctime)s.%(msecs)d %(name)s %(levelname)s %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
         filename="{}/{}.log".format(s.log_dir, ec2_instance_id),
         filemode="a",
     )
     logging.getLogger().addHandler(logging.StreamHandler())
-    logging.getLogger().setLevel(local.load_settings("logging_mode"))
+    logging.getLogger().setLevel(local.load_setting("logging_mode"))
 
-    while i < local.load_settings("iterations"):
+    logging.info("Fetcher Settings: {}".format(local.load_all_settings()))
+
+    while i < local.load_setting("iterations"):
         times = {"begin": time.time()}
         frontier_response = websch.get_frontier_partition(uuid)
         times["frontier_loaded"] = time.time()
