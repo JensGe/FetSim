@@ -8,7 +8,7 @@ import s3_upload
 import logging
 import time
 import os
-from ec2_metadata import ec2_metadata
+
 
 
 def main():
