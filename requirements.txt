@@ -2,3 +2,4 @@ requests~=2.23.0
 pytest~=5.4.2
 pydantic[email]~=1.5.1
 boto3~=1.13.6
+ec2_metadata~=2.2.0
