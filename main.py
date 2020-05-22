@@ -77,7 +77,7 @@ def main():
 
         logging.info(
             "Iteration Stats: "
-            "Load ({} ms), Fetch ({} s), Fetch CPU ({} s), Submit ({} ms).".format(
+            "load ({} ms), fetch ({} s), fetch_cpu ({} s), submit ({} ms).".format(
                 round((times["frontier_loaded"] - times["begin"]) * 1000, 3),
                 round((times["fetch_finished"] - times["fetch_begin"]), 3),
                 round(cpu_time, 3),
