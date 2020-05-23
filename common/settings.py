@@ -13,6 +13,10 @@ websch_urls_endpoint = (
 websch_settings_endpoint = (
     "http://ec2-18-185-96-23.eu-central-1.compute.amazonaws.com/settings/"
 )
+websch_stats_endpoint = (
+    "http://ec2-18-185-96-23.eu-central-1.compute.amazonaws.com/stats/"
+)
+
 
 
 # Files & Folders

@@ -72,3 +72,5 @@ def get_instance_id():
     rv = requests.get('http://169.254.169.254/latest/meta-data/instance-id')
     return rv.text
 
+def get_db_stats():
+    return requests.get(s.websch_stats_endpoint).json()

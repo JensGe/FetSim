@@ -10,7 +10,6 @@ import time
 import os
 
 
-
 def main():
     i = 0
     websch.init_fetcher_settings()
@@ -88,6 +87,15 @@ def main():
         )
 
         i += 1
+
+    time.sleep(20)
+    db_stats = websch.get_db_stats()
+    logging.info(
+        "DB Stats: "
+        "frontier_amount: {}, url_amount: {}".format(
+            db_stats["frontier_amount"], db_stats["url_amount"]
+        )
+    )
 
     s3_upload.upload()
     logging.info("Terminating Program")
