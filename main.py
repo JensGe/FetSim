@@ -92,8 +92,11 @@ def main():
     db_stats = websch.get_db_stats()
     logging.info(
         "DB Stats: "
-        "frontier_amount: {}, url_amount: {}".format(
-            db_stats["frontier_amount"], db_stats["url_amount"]
+        "frontier_amount: {}, url_amount: {}, avg_freshness: {}, visited_ratio: {}".format(
+            db_stats["frontier_amount"],
+            db_stats["url_amount"],
+            db_stats["avg_freshness"],
+            db_stats["visited_ratio"],
         )
     )
 
