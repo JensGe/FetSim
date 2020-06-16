@@ -49,9 +49,6 @@ def generate_new_internal_url(url: pyd.Url):
         url=gen.get_similar_url(url).url,
         fqdn=gen.get_fqdn_from_url(url),
         url_discovery_date=str(datetime.now()),
-        url_last_visited=None,
-        url_blacklisted=False,
-        url_bot_excluded=False,
     )
 
 
@@ -62,14 +59,13 @@ def generate_existing_url(session: requests.Session, fqdn: str = None):
         url=url.url,
         fqdn=url.fqdn,
         url_discovery_date=str(datetime.now()),
-        url_last_visited=None,
-        url_blacklisted=False,
-        url_bot_excluded=False,
     )
 
 
 def simulate_parse_url(url: pyd.Url, session: requests.Session) -> List[pyd.Url]:
     url.url_last_visited = datetime.now()
+    url.url_last_modified, url.url_eTag = gen.page_change(url)
+
     parsed_list = [url]
 
     simulated_link_amount = random.randint(

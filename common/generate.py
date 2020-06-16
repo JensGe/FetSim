@@ -1,7 +1,7 @@
 import random
 import string
 import requests
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from common import settings as s
 from common import pyd_models as pyd
@@ -14,6 +14,20 @@ def random_ipv4():
         str(random.randint(0, 256)),
         str(random.randint(0, 256)),
     )
+
+
+def random_datetime():
+    min_date = datetime(year=2000, month=1, day=1, hour=0, minute=0, second=0)
+    max_date = datetime.now()
+    delta = max_date - min_date
+    int_delta = (delta.days * 24 * 60 * 60) + delta.seconds
+    random_second = random.randrange(int_delta)
+    return min_date + timedelta(seconds=random_second)
+
+
+def page_change(url):
+    if url.url_last_modified is None and url.url_eTag is None:
+        return "".join([random_hex() for _ in range(18)]).lower()
 
 
 def random_hex():
@@ -46,7 +60,7 @@ def get_random_url(fqdn=None) -> pyd.Url:
             applied_fqdn, get_random_german_text(), get_random_web_filename()
         ),
         fqdn=applied_fqdn,
-        url_discovery_date=datetime.now()
+        url_discovery_date=datetime.now(),
     )
 
 
@@ -165,7 +179,25 @@ def random_pagerank(rank: int = random.randint(0, 14470000000)):
 def random_crawl_delay():
     # Source: (Kolay et al. 2008, S. 1171 f.)
 
-    crawl_delays = [None, 1, 2, 3, 5, 10, 15, 20, 30, 45, 50, 60, 120, 200, 300, 600, 1000]
+    crawl_delays = [
+        None,
+        1,
+        2,
+        3,
+        5,
+        10,
+        15,
+        20,
+        30,
+        45,
+        50,
+        60,
+        120,
+        200,
+        300,
+        600,
+        1000,
+    ]
     distibution = [
         0.80000,
         0.00800,
