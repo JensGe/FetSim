@@ -48,6 +48,7 @@ def generate_new_internal_url(url: pyd.Url):
     return pyd.Url(
         url=gen.get_similar_url(url).url,
         fqdn=gen.get_fqdn_from_url(url),
+        url_pagerank=gen.random_pagerank(),
         url_discovery_date=str(datetime.now()),
     )
 
@@ -58,13 +59,13 @@ def generate_existing_url(session: requests.Session, fqdn: str = None):
     return pyd.Url(
         url=url.url,
         fqdn=url.fqdn,
+        url_pagerank=gen.random_pagerank(),
         url_discovery_date=str(datetime.now()),
     )
 
 
 def simulate_parse_url(url: pyd.Url, session: requests.Session) -> List[pyd.Url]:
     url.url_last_visited = datetime.now()
-    url.url_last_modified, url.url_eTag = gen.page_change(url)
 
     parsed_list = [url]
 
@@ -94,7 +95,7 @@ def simulate_parse_url(url: pyd.Url, session: requests.Session) -> List[pyd.Url]
             parsed_list.append(new_url)
 
         if new_external_cond(internal_external_rand, known_unknown_rand):
-            new_url = gen.get_random_url()
+            new_url = gen.generate_random_url()
             logging.debug(
                 "{} New External URL: {}".format(mp.current_process(), new_url.url)
             )
@@ -149,10 +150,10 @@ def simulate_fqdn_parse(url_frontier_list: pyd.UrlFrontier) -> pyd.UrlFrontier:
         else url_frontier_list.fqdn_last_ipv6
     )
 
-    url_frontier_list.fqdn_pagerank = (
-        gen.random_pagerank()
-        if url_frontier_list.fqdn_pagerank is None
-        else url_frontier_list.fqdn_pagerank
+    url_frontier_list.fqdn_avg_pagerank = (
+        0.0
+        if url_frontier_list.fqdn_avg_pagerank is None
+        else url_frontier_list.fqdn_avg_pagerank
     )
 
     url_frontier_list.fqdn_crawl_delay = (

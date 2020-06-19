@@ -25,11 +25,6 @@ def random_datetime():
     return min_date + timedelta(seconds=random_second)
 
 
-def page_change(url):
-    if url.url_last_modified is None and url.url_eTag is None:
-        return "".join([random_hex() for _ in range(18)]).lower()
-
-
 def random_hex():
     return random.choice(string.digits + "ABCDEF")
 
@@ -53,13 +48,14 @@ def get_random_fqdn():
     return "www." + get_random_sld() + "." + get_random_tld()
 
 
-def get_random_url(fqdn=None) -> pyd.Url:
+def generate_random_url(fqdn=None) -> pyd.Url:
     applied_fqdn = get_random_fqdn() if fqdn is None else fqdn
     return pyd.Url(
         url="http://{}/{}{}".format(
             applied_fqdn, get_random_german_text(), get_random_web_filename()
         ),
         fqdn=applied_fqdn,
+        url_pagerank=random_pagerank(),
         url_discovery_date=datetime.now(),
     )
 
@@ -74,7 +70,7 @@ def get_random_existing_url(session: requests.Session, fqdn: str = None) -> pyd.
         ).json()
 
     if random_url is None:
-        random_url = get_random_url()
+        random_url = generate_random_url()
 
     return pyd.Url(
         url=random_url["url_list"][0]["url"], fqdn=random_url["url_list"][0]["fqdn"]
@@ -83,7 +79,7 @@ def get_random_existing_url(session: requests.Session, fqdn: str = None) -> pyd.
 
 def get_similar_url(url: pyd.Url) -> pyd.Url:
     fqdn = get_fqdn_from_url(url)
-    return get_random_url(fqdn=fqdn)
+    return generate_random_url(fqdn=fqdn)
 
 
 def get_random_web_filename():
@@ -149,9 +145,7 @@ def get_random_german_text(length: int = None):
     return "".join(random.choices(population=chars, weights=distribution, k=length))
 
 
-def random_pagerank(rank: int = random.randint(0, 14470000000)):
-    # Source Springer: Inf Retrieval (2006) 9: 134 Table 1
-
+def random_pagerank(rank: int = random.randint(0, 60000000000)):
     if rank <= 10:
         random_pagerank = random.uniform(8.0, 10.0)
     elif rank <= 100:
@@ -177,8 +171,6 @@ def random_pagerank(rank: int = random.randint(0, 14470000000)):
 
 
 def random_crawl_delay():
-    # Source: (Kolay et al. 2008, S. 1171 f.)
-
     crawl_delays = [
         None,
         1,
