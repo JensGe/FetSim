@@ -18,6 +18,7 @@ def url_dict(url: pyd.Url) -> dict:
     return {
         "url": str(url.url),
         "fqdn": url.fqdn,
+        "url_pagerank": url.url_pagerank,
         "url_discovery_date": discovery_date,
         "url_last_visited": last_visited,
         "url_blacklisted": url.url_blacklisted,
@@ -31,7 +32,7 @@ def fqdn_dict(fqdn: pyd.UrlFrontier) -> dict:
         "tld": fqdn.tld,
         "fqdn_last_ipv4": fqdn.fqdn_last_ipv4,
         "fqdn_last_ipv6": fqdn.fqdn_last_ipv6,
-        "fqdn_pagerank": fqdn.fqdn_pagerank,
+        "fqdn_avg_pagerank": fqdn.fqdn_avg_pagerank,
         "fqdn_crawl_delay": fqdn.fqdn_crawl_delay,
         "fqdn_url_count": fqdn.fqdn_url_count,
         "url_list": []
