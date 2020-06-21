@@ -57,10 +57,8 @@ def get_random_fqdn():
 def generate_random_url(fqdn=None) -> pyd.Url:
     applied_fqdn = get_random_fqdn() if fqdn is None else fqdn
     return pyd.Url(
-        url=HttpUrl(
-            "http://{}/{}{}".format(
-                applied_fqdn, get_random_german_text(), get_random_web_filename()
-            )
+        url="http://{}/{}{}".format(
+            applied_fqdn, get_random_german_text(), get_random_web_filename()
         ),
         fqdn=applied_fqdn,
         url_pagerank=random_pagerank(),
