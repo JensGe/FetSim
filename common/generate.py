@@ -1,8 +1,9 @@
 import random
 import string
 import requests
+import csv
 from datetime import datetime, timedelta
-
+from pydantic import HttpUrl
 from common import settings as s
 from common import pyd_models as pyd
 
@@ -40,19 +41,26 @@ def get_fqdn_from_url(url: pyd.Url):
     return fqdn
 
 
-def get_random_tld():
-    return random.choice(["de", "com", "org", "se", "fr"])
+def random_tld():
+    with open("top200_tlds.csv", "r") as file:
+        reader = csv.reader(file)
+        tld_dist = [(row[0], int(row[1])) for row in reader]
+        tlds, dist = map(list, zip(*tld_dist))
+
+    return random.choices(population=tlds, weights=dist, k=1)[0]
 
 
 def get_random_fqdn():
-    return "www." + get_random_sld() + "." + get_random_tld()
+    return "www." + random_sld() + "." + random_tld()
 
 
 def generate_random_url(fqdn=None) -> pyd.Url:
     applied_fqdn = get_random_fqdn() if fqdn is None else fqdn
     return pyd.Url(
-        url="http://{}/{}{}".format(
-            applied_fqdn, get_random_german_text(), get_random_web_filename()
+        url=HttpUrl(
+            "http://{}/{}{}".format(
+                applied_fqdn, get_random_german_text(), get_random_web_filename()
+            )
         ),
         fqdn=applied_fqdn,
         url_pagerank=random_pagerank(),
@@ -88,7 +96,7 @@ def get_random_web_filename():
     return file + extension
 
 
-def get_random_sld():
+def random_sld():
     first_char = random.choice(string.ascii_lowercase)
     random_allowed_characters = string.ascii_lowercase + "0123456789-"
     last_char = random.choice(random_allowed_characters[:-1])

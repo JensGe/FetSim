@@ -1,6 +1,7 @@
 import requests
 
 from common import settings as s
+from common import generate as gen
 from common import pyd_models as pyd
 from common import local
 from common import helper
@@ -42,7 +43,7 @@ def create_websch_crawler():
         "contact": "admin@fetsim.de",
         "name": "Demo-Fetcher #{}".format(crawler_name),
         "location": "Germany",
-        "tld_preference": "de",
+        "tld_preference": gen.random_tld(),
     }
 
     new_crawler_response = requests.post(
