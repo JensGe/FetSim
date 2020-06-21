@@ -42,7 +42,7 @@ def get_fqdn_from_url(url: pyd.Url):
 
 
 def random_tld():
-    with open("top200_tlds.csv", "r") as file:
+    with open("common/top200_tlds.csv", "r") as file:
         reader = csv.reader(file)
         tld_dist = [(row[0], int(row[1])) for row in reader]
         tlds, dist = map(list, zip(*tld_dist))
