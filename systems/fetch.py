@@ -111,7 +111,7 @@ def simulate_parse_url(url: pyd.Url, session: requests.Session) -> List[pyd.Url]
     return parsed_list
 
 
-def simulate_short_term_fetch(url_frontier_list: pyd.UrlFrontier) -> List[pyd.Url]:
+def simulate_short_term_fetch(url_frontier_list: pyd.Frontier) -> List[pyd.Url]:
     crawl_delay = (
         local.load_setting("default_crawl_delay")
         if url_frontier_list.fqdn_crawl_delay is None
@@ -134,7 +134,7 @@ def simulate_short_term_fetch(url_frontier_list: pyd.UrlFrontier) -> List[pyd.Ur
     return cumulative_parsed_list
 
 
-def simulate_fqdn_parse(url_frontier_list: pyd.UrlFrontier) -> pyd.UrlFrontier:
+def simulate_fqdn_parse(url_frontier_list: pyd.Frontier) -> pyd.Frontier:
     logging.debug(
         "{} Sim FQDN Parse: {}".format(mp.current_process(), url_frontier_list.fqdn)
     )
@@ -173,10 +173,10 @@ def get_tld(fqdn):
     return tld
 
 
-def fqdns_from_url_list(url_list: List[pyd.Url]) -> List[pyd.UrlFrontier]:
+def fqdns_from_url_list(url_list: List[pyd.Url]) -> List[pyd.Frontier]:
     fqdn_list = []
     for url in url_list:
-        fqdn_list.append(pyd.UrlFrontier(fqdn=url.fqdn, tld=get_tld(url.fqdn)))
+        fqdn_list.append(pyd.Frontier(fqdn=url.fqdn, tld=get_tld(url.fqdn)))
     return fqdn_list
 
 

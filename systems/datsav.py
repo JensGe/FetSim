@@ -26,7 +26,7 @@ def url_dict(url: pyd.Url) -> dict:
     }
 
 
-def fqdn_dict(fqdn: pyd.UrlFrontier) -> dict:
+def fqdn_dict(fqdn: pyd.Frontier) -> dict:
     return {
         "fqdn": fqdn.fqdn,
         "tld": fqdn.tld,

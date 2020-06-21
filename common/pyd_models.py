@@ -1,10 +1,10 @@
-from pydantic import BaseModel, HttpUrl, EmailStr
-
+from typing import List
 from common import enum
+from common import common_values as c
 
+from pydantic import BaseModel, HttpUrl, EmailStr
 from uuid import UUID
 from datetime import datetime
-from typing import List
 
 
 class BasisModel(BaseModel):
@@ -44,8 +44,8 @@ class DeleteCrawler(BasisModel):
 # Frontier
 class FrontierRequest(BasisModel):
     crawler_uuid: UUID
-    amount: int = 10
-    length: int = 0
+    amount: int = c.frontier_amount
+    length: int = c.frontier_length
     short_term_mode: enum.STF = enum.STF.random
     long_term_mode: enum.LTF = enum.LTF.random
 
@@ -61,8 +61,9 @@ class Url(BasisModel):
     url_bot_excluded: bool = None
 
 
-class UrlFrontier(BasisModel):
+class Frontier(BasisModel):
     fqdn: str
+    fqdn_hash: str = None
     tld: str = None
 
     fqdn_last_ipv4: str = None
@@ -87,19 +88,20 @@ class FrontierResponse(BasisModel):
     long_term_mode: enum.LTF = None
     response_url: HttpUrl = None
     latest_return: datetime = None
-    url_frontiers_count: int = 10
-    url_count: int = 0
-    url_frontiers: List[UrlFrontier] = []
+    url_frontiers_count: int = c.url_frontier_count
+    urls_count: int = c.urls_count
+    url_frontiers: List[Frontier] = []
 
 
 # Developer Tools
 class GenerateRequest(BasisModel):
-    crawler_amount: int = 3
-    fqdn_amount: int = 20
-    min_url_amount: int = 10
-    max_url_amount: int = 100
-    visited_ratio: float = 0.0
-    connection_amount: int = 0
+    crawler_amount: int = c.crawler
+    fqdn_amount: int = c.fqdn_amount
+    min_url_amount: int = c.min_url
+    max_url_amount: int = c.max_url
+    visited_ratio: float = c.visited_ratio
+    connection_amount: int = c.connections
+    fixed_crawl_delay: int = None
 
 
 class StatsResponse(BasisModel):
@@ -108,6 +110,8 @@ class StatsResponse(BasisModel):
     url_amount: int
     url_ref_amount: int
     reserved_fqdn_amount: int
+    avg_freshness: str
+    visited_ratio: float
 
 
 class DeleteDatabase(BasisModel):
@@ -127,9 +131,24 @@ class RandomUrls(BasisModel):
     url_list: List[Url] = []
 
 
-class SimulatedParsedList(BasisModel):
-    uuid: str
-    fqdn_count: int
-    fqdns: List[UrlFrontier]
-    url_count: int
-    urls: List[Url]
+class FetcherSettings(BasisModel):
+
+    logging_mode: int = None                        # 10: DEBUG, 20: INFO
+    crawling_speed_factor: float = None
+    default_crawl_delay: int = None
+    parallel_process: int = None
+    parallel_fetcher: int = None
+
+    iterations: int = None
+    fqdn_amount: int = None
+    url_amount: int = None                          # 0: unlimited
+
+    long_term_mode: enum.LTF = None
+    short_term_mode: enum.STF = None
+
+    min_links_per_page: int = None                  # Check Literature
+    max_links_per_page: int = None
+    lpp_distribution_type: enum.LPPDISTR = None
+
+    internal_vs_external_threshold: float = None    # Check Literature
+    new_vs_existing_threshold: float = None

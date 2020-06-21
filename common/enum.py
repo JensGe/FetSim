@@ -25,3 +25,37 @@ class LTF(str, Enum):
     average_change_rate = "average_change_rate"
     consistent_hashing = "consistent_hashing"
 
+
+class LPPDISTR(str, Enum):
+    """
+    Links per Page Distribution Type
+    """
+    discrete = "discrete"
+    linear_smaller = "linear_smaller"
+    power_law = "power_law"
+
+
+class ACADEMICS(str, Enum):
+    ampere = "Ampere"
+    avogadro = "Avogadro"
+    bacon = "Bacon"
+    bernoulli = "Bernoulli"
+    copernicus = "Copernicus"
+    curie = "Curie"
+    darwin = "Darwin"
+    drake = "Drake"
+    einstein = "Einstein"
+    euler = "Euler"
+    fibonacci = "Fibonacci"
+    fermat = "Fermat"
+    gauss = "Gauss"
+    gibbs = "Gibbs"
+    hilbert = "Hilbert"
+    hopper = "Hopper"
+    hawking = "Hawking"
+    kepler = "Kepler"
+    lovelace = "Lovelace"
+    mendel = "Mendel"
+    maxwell = "Maxwell"
+    newton = "Newton"
+    planck = "Planck"

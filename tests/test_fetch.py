@@ -139,7 +139,7 @@ def test_simulate_fetch():
         url_frontiers_count=2,
         urls_count=2,
         url_frontiers=[
-            pyd.UrlFrontier(
+            pyd.Frontier(
                 fqdn="www.example.de",
                 tld="de",
                 fqdn_last_ipv4="123.456.78.90",
@@ -158,7 +158,7 @@ def test_simulate_fetch():
                     ),
                 ],
             ),
-            pyd.UrlFrontier(
+            pyd.Frontier(
                 fqdn="www.example.com",
                 tld="com",
                 fqdn_last_ipv4="123.456.78.90",
@@ -205,7 +205,7 @@ def test_simulate_fetch():
 
 
 def test_simulate_short_term_fetch():
-    short_term_frontier = pyd.UrlFrontier(
+    short_term_frontier = pyd.Frontier(
         fqdn="www.example.de",
         tld="de",
         fqdn_last_ipv4="123.456.78.91",
@@ -274,25 +274,25 @@ def test_generate_existing_existing_url():
 
 def test_union_with_Urls():
     lista = [
-        pyd.UrlFrontier(fqdn="www.example.com", tld="com"),
-        pyd.UrlFrontier(fqdn="www.example.de", tld="de"),
-        pyd.UrlFrontier(fqdn="www.example.com", tld="com")
+        pyd.Frontier(fqdn="www.example.com", tld="com"),
+        pyd.Frontier(fqdn="www.example.de", tld="de"),
+        pyd.Frontier(fqdn="www.example.com", tld="com")
     ]
     listb = [
-        pyd.UrlFrontier(fqdn="www.example.com", tld="com"),
-        pyd.UrlFrontier(fqdn="www.example.fr", tld="fr"),
+        pyd.Frontier(fqdn="www.example.com", tld="com"),
+        pyd.Frontier(fqdn="www.example.fr", tld="fr"),
     ]
     asserted_list = [
-        pyd.UrlFrontier(fqdn="www.example.com", tld="com"),
-        pyd.UrlFrontier(fqdn="www.example.de", tld="de"),
-        pyd.UrlFrontier(fqdn="www.example.fr", tld="fr"),
+        pyd.Frontier(fqdn="www.example.com", tld="com"),
+        pyd.Frontier(fqdn="www.example.de", tld="de"),
+        pyd.Frontier(fqdn="www.example.fr", tld="fr"),
     ]
     assert fetch.unique_fqdn_list(lista, listb) == asserted_list
 
 
 def test_union_with_url_updates():
     list_a = [
-        pyd.UrlFrontier(
+        pyd.Frontier(
             fqdn="www.example.com",
             tld="com",
             fqdn_last_ipv4="123.456.78.90",
@@ -300,11 +300,11 @@ def test_union_with_url_updates():
     ]
 
     list_b = [
-        pyd.UrlFrontier(fqdn="www.example.com", tld="com"),
+        pyd.Frontier(fqdn="www.example.com", tld="com"),
     ]
 
     asserted_list = [
-        pyd.UrlFrontier(
+        pyd.Frontier(
             fqdn="www.example.com",
             tld="com",
             fqdn_last_ipv4="123.456.78.90",
