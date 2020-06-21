@@ -131,24 +131,9 @@ class RandomUrls(BasisModel):
     url_list: List[Url] = []
 
 
-class FetcherSettings(BasisModel):
-
-    logging_mode: int = None                        # 10: DEBUG, 20: INFO
-    crawling_speed_factor: float = None
-    default_crawl_delay: int = None
-    parallel_process: int = None
-    parallel_fetcher: int = None
-
-    iterations: int = None
-    fqdn_amount: int = None
-    url_amount: int = None                          # 0: unlimited
-
-    long_term_mode: enum.LTF = None
-    short_term_mode: enum.STF = None
-
-    min_links_per_page: int = None                  # Check Literature
-    max_links_per_page: int = None
-    lpp_distribution_type: enum.LPPDISTR = None
-
-    internal_vs_external_threshold: float = None    # Check Literature
-    new_vs_existing_threshold: float = None
+class SimulatedParsedList(BasisModel):
+    uuid: str
+    fqdn_count: int
+    fqdns: List[Frontier]
+    url_count: int
+    urls: List[Url]
