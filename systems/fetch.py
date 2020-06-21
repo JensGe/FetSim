@@ -221,7 +221,7 @@ def simulate_full_fetch(long_term_frontier: pyd.FrontierResponse):
         response_url=long_term_frontier.response_url,
         latest_return=long_term_frontier.latest_return,
         url_frontiers_count=long_term_frontier.url_frontiers_count,
-        urls_count=long_term_frontier.url_count,
+        urls_count=long_term_frontier.urls_count,
         url_frontiers=extended_url_frontier_list,
     )
 
