@@ -11,7 +11,7 @@ import logging
 def websch_uuid_exists():
     uuid = local.get_pickle_uuid()
     frontier_response = requests.patch(
-        s.websch_crawler_endpoint, json={"uuid": str(uuid)}
+        s.websch_fetcher_endpoint, json={"uuid": str(uuid)}
     )
     if frontier_response.status_code == 200:
         return True
@@ -38,7 +38,7 @@ def get_frontier_partition(uuid):
 
 
 def create_websch_crawler():
-    crawler_name = helper.generate_random_crawler_name()
+    crawler_name = helper.generate_random_fetcher_name()
     create_crawler_dict = {
         "contact": "admin@fetsim.de",
         "name": "Demo-Fetcher #{}".format(crawler_name),
@@ -47,7 +47,7 @@ def create_websch_crawler():
     }
 
     new_crawler_response = requests.post(
-        s.websch_crawler_endpoint, json=create_crawler_dict,
+        s.websch_fetcher_endpoint, json=create_crawler_dict,
     )
 
     new_crawler_json = new_crawler_response.json()

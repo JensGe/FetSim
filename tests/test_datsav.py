@@ -13,7 +13,8 @@ datsav_submit_endpoint = (
 def submit_list():
     return pyd.SimulatedParsedList(
         uuid="12345678-90ab-cdef-0000-000000000000",
-        urls_count=4,
+        fqdn_count=2,
+        url_count=4,
         fqdns=[
             {
                 "fqdn": "www.example.fr",
@@ -54,14 +55,14 @@ def test_submit_processed_list(submit_list):
 def test_conversion_list_to_dict(submit_list):
     asserted_dict = {
         "uuid": "12345678-90ab-cdef-0000-000000000000",
-        "urls_count": 4,
+        "fqdn_count": 2,
         "fqdns": [
             {
                 "fqdn": "www.example.fr",
                 "tld": "fr",
                 "fqdn_last_ipv4": "123.456.789.0",
                 "fqdn_last_ipv6": "2001:DB8::CF5C",
-                "fqdn_pagerank": 0.00001,
+                "fqdn_avg_pagerank": None,
                 "fqdn_crawl_delay": 5,
                 "fqdn_url_count": 2,
                 "url_list": []
@@ -71,12 +72,13 @@ def test_conversion_list_to_dict(submit_list):
                 "tld": "cn",
                 "fqdn_last_ipv4": "126.456.789.2",
                 "fqdn_last_ipv6": "2001:DB8::C25C",
-                "fqdn_pagerank": 0.0,
+                "fqdn_avg_pagerank": None,
                 "fqdn_crawl_delay": None,
                 "fqdn_url_count": 2,
                 "url_list": []
             },
         ],
+        "url_count": 4,
         "urls": [
             {
                 "url": "https://www.example.fr/abcefg",
@@ -85,6 +87,7 @@ def test_conversion_list_to_dict(submit_list):
                 "url_last_visited": None,
                 "url_blacklisted": None,
                 "url_bot_excluded": None,
+                "url_pagerank": None
             },
             {
                 "url": "https://www.example.fr/hijklm",
@@ -93,6 +96,7 @@ def test_conversion_list_to_dict(submit_list):
                 "url_last_visited": None,
                 "url_blacklisted": None,
                 "url_bot_excluded": None,
+                "url_pagerank": None
             },
             {
                 "url": "https://www.example.cn/abcefg",
@@ -101,6 +105,7 @@ def test_conversion_list_to_dict(submit_list):
                 "url_last_visited": None,
                 "url_blacklisted": None,
                 "url_bot_excluded": None,
+                "url_pagerank": None
             },
             {
                 "url": "https://www.example.cn/hijklm",
@@ -109,6 +114,7 @@ def test_conversion_list_to_dict(submit_list):
                 "url_last_visited": None,
                 "url_blacklisted": None,
                 "url_bot_excluded": None,
+                "url_pagerank": None
             },
         ],
     }
