@@ -2,7 +2,7 @@ import logging
 
 # Endpoints
 websch_crawler_endpoint = (
-    "http://ec2-18-185-96-23.eu-central-1.compute.amazonaws.com/crawlers/"
+    "http://ec2-18-185-96-23.eu-central-1.compute.amazonaws.com/fetchers/"
 )
 websch_frontier_endpoint = (
     "http://ec2-18-185-96-23.eu-central-1.compute.amazonaws.com/frontiers/"
