@@ -24,7 +24,7 @@ def websch_uuid_exists():
 
 def get_frontier_partition(uuid):
     frontier_request_dict = {
-        "crawler_uuid": uuid,
+        "fetcher_uuid": uuid,
         "amount": local.load_setting("fqdn_amount"),
         "length": local.load_setting("url_amount"),
         "long_term_mode": local.load_setting("long_term_mode"),
@@ -37,30 +37,30 @@ def get_frontier_partition(uuid):
     return pyd.FrontierResponse(**response)
 
 
-def create_websch_crawler():
-    crawler_name = helper.generate_random_fetcher_name()
-    create_crawler_dict = {
+def create_websch_fetcher():
+    fetcher_name = helper.generate_random_fetcher_name()
+    create_fetcher_dict = {
         "contact": "admin@fetsim.de",
-        "name": "Demo-Fetcher #{}".format(crawler_name),
+        "name": "Demo-Fetcher #{}".format(fetcher_name),
         "location": "Germany",
         "tld_preference": gen.random_tld(),
     }
 
-    new_crawler_response = requests.post(
-        s.websch_fetcher_endpoint, json=create_crawler_dict,
+    new_fetcher_response = requests.post(
+        s.websch_fetcher_endpoint, json=create_fetcher_dict,
     )
 
-    new_crawler_json = new_crawler_response.json()
+    new_fetcher_json = new_fetcher_response.json()
 
-    local.save_uuid_to_pickle(new_crawler_json["uuid"])
+    local.save_uuid_to_pickle(new_fetcher_json["uuid"])
 
 
 def init_fetcher():
     if not local.file_exists(s.uuid_file):
-        create_websch_crawler()
+        create_websch_fetcher()
 
     if not websch_uuid_exists():
-        create_websch_crawler()
+        create_websch_fetcher()
 
     return local.get_pickle_uuid()
 
@@ -72,6 +72,7 @@ def init_fetcher_settings():
 def get_instance_id():
     rv = requests.get('http://169.254.169.254/latest/meta-data/instance-id')
     return rv.text
+
 
 def get_db_stats():
     return requests.get(s.websch_stats_endpoint).json()
