@@ -95,7 +95,7 @@ def main():
         "frontier_amount: {}, "
         " url_amount: {}, "
         "avg_freshness: {}, "
-        "visited_ratio: {}"
+        "visited_ratio: {}, "
         "fqdn_hash_range: {}".format(
             db_stats["frontier_amount"],
             db_stats["url_amount"],
