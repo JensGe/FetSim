@@ -49,9 +49,9 @@ def create_websch_fetcher():
     new_fetcher_response = requests.post(
         s.websch_fetcher_endpoint, json=create_fetcher_dict,
     )
-
+    logging.info("Fetcher Response: {}".format(new_fetcher_response.json()))
     new_fetcher_json = new_fetcher_response.json()
-
+    logging.info("Fetcher UUID: {}".format(new_fetcher_json["uuid"]))
     local.save_uuid_to_pickle(new_fetcher_json["uuid"])
 
 
