@@ -13,6 +13,7 @@ log_file_extension = ".log"
 
 
 def upload():
+    logging.info("AWS ACCESS KEY ID: {}".format(aws_access_key_id))
     client = boto3.client(
         "s3",
         aws_access_key_id=aws_access_key_id,
