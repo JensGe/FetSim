@@ -70,7 +70,10 @@ def init_fetcher_settings():
 
 
 def get_instance_id():
-    rv = requests.get("http://169.254.169.254/latest/meta-data/instance-id")
+    try:
+        rv = requests.get("http://169.254.169.254/latest/meta-data/instance-id")
+    except requests.exceptions.ConnectionError:
+        return "Local_Test_ID"
     return rv.text
 
 

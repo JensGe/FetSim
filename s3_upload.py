@@ -18,7 +18,7 @@ def upload():
         aws_access_key_id=aws_access_key_id,
         aws_secret_access_key=aws_secret_access_key,
     )
-
+    logging.info("uploading...")
     for subdir, dirs, files in os.walk("logs"):
         for file in files:
             if file.endswith(log_file_extension):
