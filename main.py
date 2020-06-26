@@ -20,6 +20,8 @@ def main():
     if not os.path.exists(s.log_dir):
         os.makedirs(s.log_dir)
 
+    logger = logging.getLogger(__name__)
+
     c_handler = logging.StreamHandler()
     f_handler = logging.FileHandler(
         filename="{}/{}.log".format(s.log_dir, ec2_instance_id), mode="a"
@@ -36,16 +38,17 @@ def main():
 
     c_handler.setFormatter(formatter)
     f_handler.setFormatter(formatter)
-    logging.getLogger().addHandler(c_handler)
-    logging.getLogger().addHandler(f_handler)
-    logging.info("Fetcher Settings: {}".format(local.load_all_settings()))
+    logger.addHandler(c_handler)
+    logger.addHandler(f_handler)
+
+    logger.info("Fetcher Settings: {}".format(local.load_all_settings()))
 
     while i < local.load_setting("iterations"):
         times = {"begin": time.time()}
         frontier_response = websch.get_frontier_partition(uuid)
         times["frontier_loaded"] = time.time()
 
-        logging.info(
+        logger.info(
             "Frontier Stats: {} FQDNs, {} URLs".format(
                 frontier_response.url_frontiers_count,
                 sum(
@@ -57,7 +60,7 @@ def main():
             )
         )
         for url_frontier in frontier_response.url_frontiers:
-            logging.debug(
+            logger.debug(
                 "Frontier {} URL Amount: {}".format(
                     url_frontier.fqdn, url_frontier.fqdn_url_count
                 )
@@ -69,7 +72,7 @@ def main():
         times["fetch_finished"] = time.time()
         cpu_time = time.process_time()
 
-        logging.info(
+        logger.info(
             "Response Stats: {} FQDNs, {} URLs".format(
                 simulated_urls.fqdn_count, simulated_urls.url_count
             )
@@ -82,7 +85,7 @@ def main():
         )
         times["submission_finished"] = time.time()
 
-        logging.info(
+        logger.info(
             "Iteration Stats: "
             "load ({} ms), fetch ({} s), fetch_cpu ({} s), submit ({} ms).".format(
                 round((times["frontier_loaded"] - times["begin"]) * 1000, 3),
@@ -96,10 +99,10 @@ def main():
 
         time.sleep(5)
         db_stats = websch.get_db_stats()
-        logging.info(
+        logger.info(
             "DB Stats: "
             "frontier_amount: {}, "
-            " url_amount: {}, "
+            "url_amount: {}, "
             "avg_freshness: {}, "
             "visited_ratio: {}, "
             "fqdn_hash_range: {}".format(
@@ -114,7 +117,7 @@ def main():
         i += 1
 
     s3_upload.upload()
-    logging.info("Terminating Program")
+    logger.info("Terminating Program")
 
 
 if __name__ == "__main__":
