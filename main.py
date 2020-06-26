@@ -20,16 +20,24 @@ def main():
     if not os.path.exists(s.log_dir):
         os.makedirs(s.log_dir)
 
-    logging.basicConfig(
-        level=local.load_setting("logging_mode"),
-        format="%(asctime)s.%(msecs)d %(name)s %(levelname)s %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
-        filename="{}/{}.log".format(s.log_dir, ec2_instance_id),
-        filemode="a",
+    c_handler = logging.StreamHandler()
+    f_handler = logging.FileHandler(
+        filename="{}/{}.log".format(s.log_dir, ec2_instance_id), mode="a"
     )
-    logging.getLogger().addHandler(logging.StreamHandler())
-    logging.getLogger().setLevel(local.load_setting("logging_mode"))
 
+    c_handler.setLevel(local.load_setting("logging_mode"))
+    f_handler.setLevel(local.load_setting("logging_mode"))
+
+    formatter = logging.Formatter(
+        fmt="%(asctime)s.%(msecs)d %(name)s %(levelname)s %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+        style="%",
+    )
+
+    c_handler.setFormatter(formatter)
+    f_handler.setFormatter(formatter)
+    logging.getLogger().addHandler(c_handler)
+    logging.getLogger().addHandler(f_handler)
     logging.info("Fetcher Settings: {}".format(local.load_all_settings()))
 
     while i < local.load_setting("iterations"):
@@ -99,7 +107,7 @@ def main():
                 db_stats["url_amount"],
                 db_stats["avg_freshness"],
                 db_stats["visited_ratio"],
-                db_stats["fqdn_hash_range"]
+                db_stats["fqdn_hash_range"],
             )
         )
 

@@ -13,7 +13,6 @@ log_file_extension = ".log"
 
 
 def upload():
-    logging.info("AWS ACCESS KEY ID: {}".format(aws_access_key_id))
     client = boto3.client(
         "s3",
         aws_access_key_id=aws_access_key_id,
@@ -22,9 +21,7 @@ def upload():
     logging.info("uploading...")
     for subdir, dirs, files in os.walk("logs"):
         for file in files:
-            logging.info("File: {}".format(str(file)))
             if file.endswith(log_file_extension):
-
                 logging.info("Upload: {}".format(file))
                 fetsim_origin_file = os.path.join(subdir, file)
                 bucket_dest_file = bucket_folder + "/" + file
