@@ -93,7 +93,7 @@ def main():
             "frontier_amount: {}, "
             " url_amount: {}, "
             "avg_freshness: {}, "
-            "visited_ratio: {}"
+            "visited_ratio: {}, "
             "fqdn_hash_range: {}".format(
                 db_stats["frontier_amount"],
                 db_stats["url_amount"],
@@ -104,8 +104,6 @@ def main():
         )
 
         i += 1
-
-
 
     s3_upload.upload()
     logging.info("Terminating Program")

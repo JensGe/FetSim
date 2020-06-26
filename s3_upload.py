@@ -18,10 +18,12 @@ def upload():
         aws_access_key_id=aws_access_key_id,
         aws_secret_access_key=aws_secret_access_key,
     )
-
+    logging.info("uploading...")
     for subdir, dirs, files in os.walk("logs"):
         for file in files:
+            logging.info("File: {}".format(str(file)))
             if file.endswith(log_file_extension):
+
                 logging.info("Upload: {}".format(file))
                 fetsim_origin_file = os.path.join(subdir, file)
                 bucket_dest_file = bucket_folder + "/" + file
