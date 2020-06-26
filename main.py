@@ -86,24 +86,26 @@ def main():
             )
         )
 
+        time.sleep(5)
+        db_stats = websch.get_db_stats()
+        logging.info(
+            "DB Stats: "
+            "frontier_amount: {}, "
+            " url_amount: {}, "
+            "avg_freshness: {}, "
+            "visited_ratio: {}"
+            "fqdn_hash_range: {}".format(
+                db_stats["frontier_amount"],
+                db_stats["url_amount"],
+                db_stats["avg_freshness"],
+                db_stats["visited_ratio"],
+                db_stats["fqdn_hash_range"]
+            )
+        )
+
         i += 1
 
-    time.sleep(20)
-    db_stats = websch.get_db_stats()
-    logging.info(
-        "DB Stats: "
-        "frontier_amount: {}, "
-        " url_amount: {}, "
-        "avg_freshness: {}, "
-        "visited_ratio: {}"
-        "fqdn_hash_range: {}".format(
-            db_stats["frontier_amount"],
-            db_stats["url_amount"],
-            db_stats["avg_freshness"],
-            db_stats["visited_ratio"],
-            db_stats["fqdn_hash_range"]
-        )
-    )
+
 
     s3_upload.upload()
     logging.info("Terminating Program")
