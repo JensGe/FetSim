@@ -1,5 +1,3 @@
-import sys
-
 from systems import fetch, websch, datsav
 from common import settings as s
 from common import local
@@ -20,26 +18,21 @@ def main():
     if not os.path.exists(s.log_dir):
         os.makedirs(s.log_dir)
 
-    logger = logging.getLogger(__name__)
+    logger = logging.getLogger('FETSIM')
+    logger.setLevel(local.load_setting("logging_mode"))
 
-    c_handler = logging.StreamHandler()
-    f_handler = logging.FileHandler(
-        filename="{}/{}.log".format(s.log_dir, ec2_instance_id), mode="a"
-    )
+    fh = logging.FileHandler("{}/{}.log".format(s.log_dir, ec2_instance_id))
+    fh.setLevel(local.load_setting("logging_mode"))
 
-    c_handler.setLevel(local.load_setting("logging_mode"))
-    f_handler.setLevel(local.load_setting("logging_mode"))
+    ch = logging.StreamHandler()
+    ch.setLevel(local.load_setting("logging_mode"))
 
-    formatter = logging.Formatter(
-        fmt="%(asctime)s.%(msecs)d %(name)s %(levelname)s %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
-        style="%",
-    )
+    formatter = logging.Formatter('%(asctime)s.%(msecs)d %(name)s %(levelname)s %(message)s')
+    fh.setFormatter(formatter)
+    ch.setFormatter(formatter)
 
-    c_handler.setFormatter(formatter)
-    f_handler.setFormatter(formatter)
-    logger.addHandler(c_handler)
-    logger.addHandler(f_handler)
+    logger.addHandler(fh)
+    logger.addHandler(ch)
 
     logger.info("Fetcher Settings: {}".format(local.load_all_settings()))
 
