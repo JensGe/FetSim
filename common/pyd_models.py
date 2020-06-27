@@ -46,8 +46,9 @@ class FrontierRequest(BasisModel):
     fetcher_uuid: UUID
     amount: int = c.frontier_amount
     length: int = c.frontier_length
-    short_term_mode: enum.STF = enum.STF.random
-    long_term_mode: enum.LTF = enum.LTF.random
+    short_term_prio_mode: enum.SHORTPRIO = enum.SHORTPRIO.random
+    long_term_prio_mode: enum.LONGPRIO = enum.LONGPRIO.random
+    long_term_part_mode: enum.LONGPART = enum.LONGPART.none
 
 
 class Url(BasisModel):
@@ -84,13 +85,22 @@ class URLReference(BasisModel):
 
 class FrontierResponse(BasisModel):
     uuid: str
-    short_term_mode: enum.STF = None
-    long_term_mode: enum.LTF = None
+    short_term_prio_mode: enum.SHORTPRIO = None
+    long_term_prio_mode: enum.LONGPRIO = None
+    long_term_part_mode: enum.LONGPART = None
     response_url: HttpUrl = None
     latest_return: datetime = None
     url_frontiers_count: int = c.url_frontier_count
     urls_count: int = c.urls_count
     url_frontiers: List[Frontier] = []
+
+
+class SubmitFrontier(BasisModel):
+    uuid: str
+    fqdn_count: int
+    fqdns: List[Frontier]
+    url_count: int
+    urls: List[Url] = []
 
 
 # Developer Tools
@@ -112,6 +122,7 @@ class StatsResponse(BasisModel):
     reserved_fqdn_amount: int
     avg_freshness: str
     visited_ratio: float
+    fqdn_hash_range: float
 
 
 class DeleteDatabase(BasisModel):
@@ -129,6 +140,30 @@ class GetRandomUrls(BasisModel):
 
 class RandomUrls(BasisModel):
     url_list: List[Url] = []
+
+
+class FetcherSettings(BasisModel):
+
+    logging_mode: int = 20
+    crawling_speed_factor: float = 10
+    default_crawl_delay: int = 5
+    parallel_process: int = 12
+    parallel_fetcher: int = 1
+
+    iterations: int = 1
+    fqdn_amount: int = 10
+    url_amount: int = 0
+
+    short_term_prio_mode: enum.SHORTPRIO = enum.SHORTPRIO.random
+    long_term_prio_mode: enum.LONGPRIO = enum.LONGPRIO.random
+    long_term_part_mode: enum.LONGPART = enum.LONGPART.none
+
+    min_links_per_page: int = 1
+    max_links_per_page: int = 1
+    lpp_distribution_type: enum.PAGELINKDISTR = enum.PAGELINKDISTR.discrete
+
+    internal_vs_external_threshold: float = 1.0
+    new_vs_existing_threshold: float = 1.0
 
 
 class SimulatedParsedList(BasisModel):

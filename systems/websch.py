@@ -27,8 +27,9 @@ def get_frontier_partition(uuid):
         "fetcher_uuid": uuid,
         "amount": local.load_setting("fqdn_amount"),
         "length": local.load_setting("url_amount"),
-        "long_term_mode": local.load_setting("long_term_mode"),
-        "short_term_mode": local.load_setting("short_term_mode"),
+        "long_term_part_mode": local.load_setting("long_term_part_mode"),
+        "long_term_prio_mode": local.load_setting("long_term_prio_mode"),
+        "short_term_prio_mode": local.load_setting("short_term_prio_mode"),
     }
 
     response = requests.post(
