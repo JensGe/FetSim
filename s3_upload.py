@@ -11,6 +11,8 @@ bucket_name = "fetsim-logs"
 bucket_folder = "fetsim-logs"
 log_file_extension = ".log"
 
+logger = logging.getLogger('FETSIM')
+
 
 def upload():
     client = boto3.client(
@@ -18,7 +20,7 @@ def upload():
         aws_access_key_id=aws_access_key_id,
         aws_secret_access_key=aws_secret_access_key,
     )
-    logging.info("uploading...")
+    logger.info("uploading...")
     for subdir, dirs, files in os.walk("logs"):
         for file in files:
             if file.endswith(log_file_extension):

@@ -18,7 +18,7 @@ def main():
     if not os.path.exists(s.log_dir):
         os.makedirs(s.log_dir)
 
-    logger = logging.getLogger('FETSIM')
+    logger = logging.getLogger("FETSIM")
     logger.setLevel(local.load_setting("logging_mode"))
 
     fh = logging.FileHandler("{}/{}.log".format(s.log_dir, ec2_instance_id))
@@ -27,7 +27,9 @@ def main():
     ch = logging.StreamHandler()
     ch.setLevel(local.load_setting("logging_mode"))
 
-    formatter = logging.Formatter('%(asctime)s.%(msecs)d %(name)s %(levelname)s %(message)s')
+    formatter = logging.Formatter(
+        "%(asctime)s.%(msecs)d %(name)s %(levelname)s %(message)s"
+    )
     fh.setFormatter(formatter)
     ch.setFormatter(formatter)
 

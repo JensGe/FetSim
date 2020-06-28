@@ -7,6 +7,8 @@ from common import local
 from common import helper
 import logging
 
+logger = logging.getLogger('FETSIM')
+
 
 def websch_uuid_exists():
     uuid = local.get_pickle_uuid()
@@ -16,10 +18,10 @@ def websch_uuid_exists():
     if frontier_response.status_code == 200:
         return True
     elif frontier_response.status_code == 404:
-        logging.debug("Crawler with UUID: {} not found".format(uuid))
+        logger.debug("Crawler with UUID: {} not found".format(uuid))
         return False
     else:
-        logging.error(frontier_response)
+        logger.error(frontier_response)
 
 
 def get_frontier_partition(uuid):
@@ -50,9 +52,9 @@ def create_websch_fetcher():
     new_fetcher_response = requests.post(
         s.websch_fetcher_endpoint, json=create_fetcher_dict,
     )
-    logging.info("Fetcher Response: {}".format(new_fetcher_response.json()))
+    logger.info("Fetcher Response: {}".format(new_fetcher_response.json()))
     new_fetcher_json = new_fetcher_response.json()
-    logging.info("Fetcher UUID: {}".format(new_fetcher_json["uuid"]))
+    logger.info("Fetcher UUID: {}".format(new_fetcher_json["uuid"]))
     local.save_uuid_to_pickle(new_fetcher_json["uuid"])
 
 

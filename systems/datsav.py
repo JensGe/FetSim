@@ -2,6 +2,8 @@ import requests
 import logging
 from common import pyd_models as pyd
 
+logger = logging.getLogger("FETSIM")
+
 
 def url_dict(url: pyd.Url) -> dict:
     discovery_date = (
@@ -35,7 +37,7 @@ def fqdn_dict(fqdn: pyd.Frontier) -> dict:
         "fqdn_avg_pagerank": fqdn.fqdn_avg_pagerank,
         "fqdn_crawl_delay": fqdn.fqdn_crawl_delay,
         "fqdn_url_count": fqdn.fqdn_url_count,
-        "url_list": []
+        "url_list": [],
     }
 
 
@@ -55,6 +57,6 @@ def submit_processed_list(submission_endpoint, submit_list: pyd.SimulatedParsedL
 
     submit_response = requests.post(url=submission_endpoint, json=submit_dict)
 
-    logging.debug("Submission Endpoint: {}".format(submission_endpoint))
-    logging.debug("Submission: {}".format(submit_dict))
+    logger.debug("Submission Endpoint: {}".format(submission_endpoint))
+    logger.debug("Submission: {}".format(submit_dict))
     return submit_response.status_code

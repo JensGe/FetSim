@@ -12,6 +12,9 @@ import logging
 import requests
 
 
+logger = logging.getLogger('FETSIM')
+
+
 def new_internal_cond(internal_vs_external_randomness, known_vs_unknown_randomness):
     return internal_vs_external_randomness < local.load_setting(
         "internal_vs_external_threshold"
@@ -49,7 +52,7 @@ def generate_new_internal_url(url: pyd.Url):
         url=gen.get_similar_url(url).url,
         fqdn=gen.get_fqdn_from_url(url),
         url_pagerank=gen.random_pagerank(),
-        url_discovery_date=str(datetime.now()),
+        url_discovery_date=datetime.now(),
     )
 
 
@@ -60,7 +63,7 @@ def generate_existing_url(session: requests.Session, fqdn: str = None):
         url=url.url,
         fqdn=url.fqdn,
         url_pagerank=gen.random_pagerank(),
-        url_discovery_date=str(datetime.now()),
+        url_discovery_date=datetime.now(),
     )
 
 
@@ -74,7 +77,7 @@ def simulate_parse_url(url: pyd.Url, session: requests.Session) -> List[pyd.Url]
         local.load_setting("max_links_per_page"),
     )
 
-    logging.debug("{} Next URL: {}".format(mp.current_process(), url.url))
+    logger.debug("{} Next URL: {}".format(mp.current_process(), url.url))
 
     for _ in range(simulated_link_amount):
         internal_external_rand = random.random()
@@ -82,28 +85,28 @@ def simulate_parse_url(url: pyd.Url, session: requests.Session) -> List[pyd.Url]
 
         if new_internal_cond(internal_external_rand, known_unknown_rand):
             new_url = generate_new_internal_url(url)
-            logging.debug(
+            logger.debug(
                 "{} New Internal URL: {}".format(mp.current_process(), new_url.url)
             )
             parsed_list.append(new_url)
 
         if existing_internal_cond(internal_external_rand, known_unknown_rand):
             new_url = generate_existing_url(session=session, fqdn=url.fqdn)
-            logging.debug(
+            logger.debug(
                 "{} Existing Internal URL: {}".format(mp.current_process(), new_url.url)
             )
             parsed_list.append(new_url)
 
         if new_external_cond(internal_external_rand, known_unknown_rand):
             new_url = gen.generate_random_url()
-            logging.debug(
+            logger.debug(
                 "{} New External URL: {}".format(mp.current_process(), new_url.url)
             )
             parsed_list.append(new_url)
 
         if existing_external_cond(internal_external_rand, known_unknown_rand):
             new_url = generate_existing_url(session=session)
-            logging.debug(
+            logger.debug(
                 "{} Existing External URL: {}".format(mp.current_process(), new_url.url)
             )
             parsed_list.append(new_url)
@@ -126,7 +129,7 @@ def simulate_short_term_fetch(url_frontier_list: pyd.Frontier) -> List[pyd.Url]:
         cumulative_parsed_list.extend(simulate_parse_url(url, session))
         sleep(simulated_crawl_delay)
 
-    logging.info(
+    logger.info(
         "Short Term Frontier processed. FQDN {}, URLs {}".format(
             url_frontier_list.fqdn, url_frontier_list.fqdn_url_count
         )
@@ -135,7 +138,7 @@ def simulate_short_term_fetch(url_frontier_list: pyd.Frontier) -> List[pyd.Url]:
 
 
 def simulate_fqdn_parse(url_frontier_list: pyd.Frontier) -> pyd.Frontier:
-    logging.debug(
+    logger.debug(
         "{} Sim FQDN Parse: {}".format(mp.current_process(), url_frontier_list.fqdn)
     )
     url_frontier_list.fqdn_last_ipv4 = (
@@ -195,7 +198,7 @@ def unique_fqdn_list(a, b) -> List:
 
 def simulate_full_fetch(long_term_frontier: pyd.FrontierResponse):
 
-    logging.debug("Long Term Frontier: {}".format(long_term_frontier))
+    logger.debug("Long Term Frontier: {}".format(long_term_frontier))
 
     fqdn_pool = mp.Pool(processes=local.load_setting("parallel_process"))
     url_frontier_list = fqdn_pool.map(
@@ -203,7 +206,7 @@ def simulate_full_fetch(long_term_frontier: pyd.FrontierResponse):
     )
     fqdn_pool.close()
 
-    logging.debug("URL Frontier List ins: {}".format(url_frontier_list))
+    logger.debug("URL Frontier List ins: {}".format(url_frontier_list))
 
     url_pool = mp.Pool(processes=local.load_setting("parallel_process"))
     url_data = url_pool.map(simulate_short_term_fetch, url_frontier_list)
@@ -211,7 +214,7 @@ def simulate_full_fetch(long_term_frontier: pyd.FrontierResponse):
 
     flat_url_data = [url for url_list in url_data for url in url_list]
 
-    logging.debug("Url Data: {}".format(flat_url_data))
+    logger.debug("Url Data: {}".format(flat_url_data))
 
     all_new_fqdns = fqdns_from_url_list(flat_url_data)
     extended_url_frontier_list = unique_fqdn_list(url_frontier_list, all_new_fqdns)
