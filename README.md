@@ -1,4 +1,4 @@
-# FetSim
+# owi Fetcher Simulator
 
 ## Settings
 
