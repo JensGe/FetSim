@@ -28,7 +28,7 @@ def main():
     ch.setLevel(local.load_setting("logging_mode"))
 
     formatter = logging.Formatter(
-        "%(asctime)s.%(msecs)d %(name)s %(levelname)s %(message)s"
+        "%(asctime)s %(name)s %(levelname)s %(message)s"
     )
     fh.setFormatter(formatter)
     ch.setFormatter(formatter)
