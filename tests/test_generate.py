@@ -7,8 +7,24 @@ import requests
 session = requests.Session()
 
 
-def test_get_random_existing_url():
+def test_get_random_existing_url_without_fqdn():
     single_random_existing_url = generate.get_random_existing_url(session=session)
+    assert isinstance(single_random_existing_url, pyd.Url)
+
+
+def test_get_random_existing_url_with_fqdn():
+    fqdn = "www.l-9ni50dw0nyflze.com"
+    single_random_existing_url = generate.get_random_existing_url(
+        session=session, fqdn=fqdn
+    )
+    assert isinstance(single_random_existing_url, pyd.Url)
+
+
+def test_get_random_existing_url_with_non_existing_fqdn():
+    fqdn = "www.abc.com"
+    single_random_existing_url = generate.get_random_existing_url(
+        session=session, fqdn=fqdn
+    )
     assert isinstance(single_random_existing_url, pyd.Url)
 
 

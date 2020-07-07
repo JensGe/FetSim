@@ -72,11 +72,12 @@ def get_random_existing_url(session: requests.Session, fqdn: str = None) -> pyd.
 
     else:
         random_url = session.get(
-            "{}&fqdn={}".format(s.websch_random_urls_endpoint, fqdn)
+            "{}?fqdn={}".format(s.websch_random_urls_endpoint, fqdn)
         ).json()
 
-    if random_url is None:
-        random_url = generate_random_url()
+    if len(random_url["url_list"]) == 0:
+        new_url = generate_random_url()
+        random_url["url_list"].append(dict(url=new_url.url, fqdn=new_url.fqdn))
 
     return pyd.Url(
         url=random_url["url_list"][0]["url"], fqdn=random_url["url_list"][0]["fqdn"]

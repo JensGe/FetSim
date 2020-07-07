@@ -275,7 +275,7 @@ def test_generate_existing_existing_url():
     assert existing_url.fqdn == fqdn
 
 
-def test_union_with_Urls():
+def test_union_with_urls():
     lista = [
         pyd.Frontier(fqdn="www.example.com", tld="com"),
         pyd.Frontier(fqdn="www.example.de", tld="de"),
