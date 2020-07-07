@@ -65,7 +65,7 @@ def test_conversion_list_to_dict(submit_list):
                 "fqdn_avg_pagerank": None,
                 "fqdn_crawl_delay": 5,
                 "fqdn_url_count": 2,
-                "url_list": []
+                "url_list": [],
             },
             {
                 "fqdn": "www.example.cn",
@@ -75,7 +75,7 @@ def test_conversion_list_to_dict(submit_list):
                 "fqdn_avg_pagerank": None,
                 "fqdn_crawl_delay": None,
                 "fqdn_url_count": 2,
-                "url_list": []
+                "url_list": [],
             },
         ],
         "url_count": 4,
@@ -87,7 +87,7 @@ def test_conversion_list_to_dict(submit_list):
                 "url_last_visited": None,
                 "url_blacklisted": None,
                 "url_bot_excluded": None,
-                "url_pagerank": None
+                "url_pagerank": None,
             },
             {
                 "url": "https://www.example.fr/hijklm",
@@ -96,7 +96,7 @@ def test_conversion_list_to_dict(submit_list):
                 "url_last_visited": None,
                 "url_blacklisted": None,
                 "url_bot_excluded": None,
-                "url_pagerank": None
+                "url_pagerank": None,
             },
             {
                 "url": "https://www.example.cn/abcefg",
@@ -105,7 +105,7 @@ def test_conversion_list_to_dict(submit_list):
                 "url_last_visited": None,
                 "url_blacklisted": None,
                 "url_bot_excluded": None,
-                "url_pagerank": None
+                "url_pagerank": None,
             },
             {
                 "url": "https://www.example.cn/hijklm",
@@ -114,7 +114,7 @@ def test_conversion_list_to_dict(submit_list):
                 "url_last_visited": None,
                 "url_blacklisted": None,
                 "url_bot_excluded": None,
-                "url_pagerank": None
+                "url_pagerank": None,
             },
         ],
     }
@@ -130,4 +130,5 @@ def test_url_to_dict():
         "url_last_visited": None,
         "url_blacklisted": None,
         "url_bot_excluded": None,
+        "url_pagerank": None,
     }

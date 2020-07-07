@@ -4,8 +4,11 @@ from common import settings as s
 from common.pyd_models import HttpUrl, datetime
 
 import pytest
+import requests
 from typing import List
 
+
+session = requests.Session()
 
 @pytest.fixture
 def example_frontier_partition():
@@ -123,7 +126,7 @@ def test_simulate_parse_url():
         url_bot_excluded=False,
     )
 
-    parsed_list = fetch.simulate_parse_url(url)
+    parsed_list = fetch.simulate_parse_url(url, session)
     assert isinstance(parsed_list[0].url, HttpUrl)
     assert parsed_list[0].url_discovery_date is None
     assert parsed_list[0].url_last_visited != "2020-01-01T06:00:00"
@@ -185,7 +188,7 @@ def test_simulate_fetch():
     assert processed_list.uuid == frontier_partition.uuid
     assert isinstance(processed_list.url_count, int)
 
-    assert processed_list.url_count == frontier_partition.url_count * (
+    assert processed_list.url_count == frontier_partition.urls_count * (
         s.max_links_per_page + 1
     )
 
@@ -259,14 +262,14 @@ def test_condition_functions():
 
 
 def test_generate_existing_new_url():
-    new_url = fetch.generate_existing_url()
+    new_url = fetch.generate_existing_url(session=session)
     assert isinstance(new_url, pyd.Url)
 
 
 def test_generate_existing_existing_url():
     fqdn = "www.z1wp7ztzkp6lxmc.cn"
 
-    existing_url = fetch.generate_existing_url(fqdn=fqdn)
+    existing_url = fetch.generate_existing_url(fqdn=fqdn, session=session)
 
     assert isinstance(existing_url, pyd.Url)
     assert existing_url.fqdn == fqdn

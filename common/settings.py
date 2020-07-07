@@ -7,8 +7,8 @@ websch_fetcher_endpoint = (
 websch_frontier_endpoint = (
     "http://ec2-18-185-96-23.eu-central-1.compute.amazonaws.com/frontiers/"
 )
-websch_urls_endpoint = (
-    "http://ec2-18-185-96-23.eu-central-1.compute.amazonaws.com/urls/"
+websch_random_urls_endpoint = (
+    "http://ec2-18-185-96-23.eu-central-1.compute.amazonaws.com/urls/random/"
 )
 websch_settings_endpoint = (
     "http://ec2-18-185-96-23.eu-central-1.compute.amazonaws.com/settings/"
