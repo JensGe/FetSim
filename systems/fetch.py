@@ -56,7 +56,7 @@ def generate_new_internal_url(url: pyd.Url):
     )
 
 
-def generate_existing_url(session: requests.Session, fqdn: str = None):
+def generate_existing_external_url(session: requests.Session, fqdn: str = None):
     url = gen.get_random_existing_url(session=session, fqdn=fqdn)
 
     return pyd.Url(
@@ -65,6 +65,16 @@ def generate_existing_url(session: requests.Session, fqdn: str = None):
         url_pagerank=gen.random_pagerank(),
         url_discovery_date=datetime.now(),
     )
+
+
+def generate_existing_internal_url(url: pyd.Url):
+    return pyd.Url(
+        url=url.url,
+        fqdn=url.fqdn,
+        url_pagerank=url.url_pagerank,
+        url_discovery_date=url.url_discovery_date,
+    )
+
 
 
 def simulate_parse_url(url: pyd.Url, session: requests.Session) -> List[pyd.Url]:
@@ -91,7 +101,7 @@ def simulate_parse_url(url: pyd.Url, session: requests.Session) -> List[pyd.Url]
             parsed_list.append(new_url)
 
         if existing_internal_cond(internal_external_rand, known_unknown_rand):
-            new_url = generate_existing_url(session=session, fqdn=url.fqdn)
+            new_url = generate_existing_internal_url(url=url)
             logger.debug(
                 "{} Existing Internal URL: {}".format(mp.current_process(), new_url.url)
             )
@@ -105,7 +115,7 @@ def simulate_parse_url(url: pyd.Url, session: requests.Session) -> List[pyd.Url]
             parsed_list.append(new_url)
 
         if existing_external_cond(internal_external_rand, known_unknown_rand):
-            new_url = generate_existing_url(session=session)
+            new_url = generate_existing_external_url(session=session)
             logger.debug(
                 "{} Existing External URL: {}".format(mp.current_process(), new_url.url)
             )

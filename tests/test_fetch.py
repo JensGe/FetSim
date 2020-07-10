@@ -262,14 +262,14 @@ def test_condition_functions():
 
 
 def test_generate_existing_new_url():
-    new_url = fetch.generate_existing_url(session=session)
+    new_url = fetch.generate_existing_external_url(session=session)
     assert isinstance(new_url, pyd.Url)
 
 
 def test_generate_existing_existing_url():
     fqdn = "www.z1wp7ztzkp6lxmc.cn"
 
-    existing_url = fetch.generate_existing_url(fqdn=fqdn, session=session)
+    existing_url = fetch.generate_existing_external_url(fqdn=fqdn, session=session)
 
     assert isinstance(existing_url, pyd.Url)
     assert existing_url.fqdn == fqdn
