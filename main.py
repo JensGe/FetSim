@@ -85,15 +85,17 @@ def main():
             "iter_fetch_duration: {}, "
             "iter_fetch_cpu_time: {}, "
             "iter_submit_duration: {}".format(
-                round((times["frontier_loaded"] - times["begin"]) * 1000, 3),
+                round((times["frontier_loaded"] - times["begin"]), 3),
                 time.strftime(
-                    time.strftime("%Y-%m-%d %H:%M:%S.{}".format(int(times["fetch_begin"] % 1000000)),
-                                  time.gmtime(times["fetch_begin"] / 1000000)),
+                    "%Y-%m-%d %H:%M:%S.{}".format(
+                        int(times["fetch_begin"] * 1000) % 1000
+                    ),
+                    time.gmtime(times["fetch_begin"]),
                 ),
                 round((times["fetch_finished"] - times["fetch_begin"]), 3),
                 round(cpu_time, 3),
                 round(
-                    (times["submission_finished"] - times["submission_begin"]) * 1000, 3
+                    (times["submission_finished"] - times["submission_begin"]), 3
                 ),
             )
         )
