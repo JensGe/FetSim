@@ -80,15 +80,15 @@ def main():
 
         logger.info(
             "Iteration Stats: "
-            "iter_load_duration: {}, "
+            "iter_load_duration: {} s, "
             "iter_fetch_start: {}, "
-            "iter_fetch_duration: {}, "
-            "iter_fetch_cpu_time: {}, "
-            "iter_submit_duration: {}".format(
+            "iter_fetch_duration: {} s, "
+            "iter_fetch_cpu_time: {} s, "
+            "iter_submit_duration: {} s".format(
                 round((times["frontier_loaded"] - times["begin"]), 3),
                 time.strftime(
-                    "%Y-%m-%d %H:%M:%S.{}".format(
-                        int(times["fetch_begin"] * 1000) % 1000
+                    "%Y-%m-%d %H:%M:%S.{}{}".format(
+                        int(times["fetch_begin"] * 1000) % 1000, "000"
                     ),
                     time.gmtime(times["fetch_begin"]),
                 ),
