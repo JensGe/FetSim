@@ -87,8 +87,8 @@ def main():
             "iter_submit_duration: {}".format(
                 round((times["frontier_loaded"] - times["begin"]) * 1000, 3),
                 time.strftime(
-                    "%Y-%m-%d %H:%M:%S,{}".format(int(times["fetch_begin"] % 1000)),
-                    time.gmtime(times["fetch_begin"]),
+                    time.strftime("%Y-%m-%d %H:%M:%S.{}".format(int(times["fetch_begin"] % 1000000)),
+                                  time.gmtime(times["fetch_begin"] / 1000000)),
                 ),
                 round((times["fetch_finished"] - times["fetch_begin"]), 3),
                 round(cpu_time, 3),
