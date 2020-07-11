@@ -108,7 +108,7 @@ def main():
             "db_url_amount: {}, "
             "db_avg_freshness: {}, "
             "db_visited_ratio: {}, "
-            "db_fqdn_hash_range: {}".format(
+            "db_fqdn_hash_range: {} %".format(
                 db_stats["frontier_amount"],
                 db_stats["url_amount"],
                 db_stats["avg_freshness"],
