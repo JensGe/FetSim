@@ -27,9 +27,7 @@ def main():
     ch = logging.StreamHandler()
     ch.setLevel(local.load_setting("logging_mode"))
 
-    formatter = logging.Formatter(
-        "%(asctime)s %(name)s %(levelname)s %(message)s"
-    )
+    formatter = logging.Formatter("%(asctime)s %(name)s %(levelname)s %(message)s")
     fh.setFormatter(formatter)
     ch.setFormatter(formatter)
 
@@ -82,8 +80,16 @@ def main():
 
         logger.info(
             "Iteration Stats: "
-            "load ({} ms), fetch ({} s), fetch_cpu ({} s), submit ({} ms).".format(
+            "iter_load_duration: {}, "
+            "iter_fetch_start: {}, "
+            "iter_fetch_duration {}, "
+            "iter_fetch_cpu_time {}, "
+            "iter_submit_duration {}.".format(
                 round((times["frontier_loaded"] - times["begin"]) * 1000, 3),
+                time.strftime(
+                    "%Y-%m-%d %H:%M:%S.{}".format(int(times["fetch_begin"] % 1000)),
+                    time.gmtime(times["fetch_begin"]),
+                ),
                 round((times["fetch_finished"] - times["fetch_begin"]), 3),
                 round(cpu_time, 3),
                 round(
