@@ -82,9 +82,9 @@ def main():
             "Iteration Stats: "
             "iter_load_duration: {}, "
             "iter_fetch_start: {}, "
-            "iter_fetch_duration {}, "
-            "iter_fetch_cpu_time {}, "
-            "iter_submit_duration {}".format(
+            "iter_fetch_duration: {}, "
+            "iter_fetch_cpu_time: {}, "
+            "iter_submit_duration: {}".format(
                 round((times["frontier_loaded"] - times["begin"]) * 1000, 3),
                 time.strftime(
                     "%Y-%m-%d %H:%M:%S.{}".format(int(times["fetch_begin"] % 1000)),
