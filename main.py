@@ -60,10 +60,10 @@ def main():
             )
 
         times["fetch_begin"] = time.time()
-        time.process_time()
+        cpu_time_before = time.process_time()
         simulated_urls = fetch.simulate_full_fetch(frontier_response)
         times["fetch_finished"] = time.time()
-        cpu_time = time.process_time()
+        cpu_time = time.process_time() - cpu_time_before
 
         logger.info(
             "Response Stats: {} FQDNs, {} URLs".format(
