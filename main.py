@@ -1,6 +1,7 @@
 from systems import fetch, websch, datsav
 from common import settings as s
 from common import local
+from time import sleep
 import s3_upload
 
 import logging
@@ -123,5 +124,16 @@ def main():
     logger.info("Terminating Program")
 
 
+def create_fetcher_over_time():
+    for j in range(200):
+        for i in range(15):
+            print("-", end='')
+            sleep(1)
+        print("")
+        websch.create_websch_fetcher()
+        print("fetcher_{}".format(j))
+
+
 if __name__ == "__main__":
     main()
+    # create_fetcher_over_time()

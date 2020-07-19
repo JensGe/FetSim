@@ -45,6 +45,7 @@ def create_websch_fetcher():
     create_fetcher_dict = {
         "contact": "admin@fetsim.de",
         "name": "Demo-Fetcher #{}".format(fetcher_name),
+        # "name": "Interrupt-Fetcher #{}".format(fetcher_name),
         "location": "Germany",
         "tld_preference": gen.random_tld(),
     }
